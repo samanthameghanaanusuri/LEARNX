@@ -126,15 +126,52 @@
                     <div style="margin-top: 1.5rem;" id="intelligence-requirements">
                         <!-- Checklist injected by JS -->
                     </div>
+                    <!-- AI Assistant is now a floating panel -->
                 </aside>
 
             </div>
         </main>
     </div>
+    
+    <!-- Floating AI Toggle Button -->
+    <button id="ai-floating-btn" class="ai-floating-btn" onclick="toggleAIPanel()" aria-label="Open AI Assistant" style="display: none;">
+        🤖
+    </button>
 
+    <!-- Floating AI Panel -->
+    <div id="ai-assistant-panel" class="ai-assistant-floating glass-panel">
+        <div class="ai-panel-header">
+            <h4 style="margin: 0; color: #00ff88;">🤖 AI LEARNING AGENT</h4>
+            <div style="display: flex; gap: 8px;">
+                <button id="ai-minimize-btn" onclick="toggleAIPanel()" aria-label="Minimize AI panel" style="background: transparent; border: none; color: white; cursor: pointer;">−</button>
+                <button id="ai-close-btn" onclick="closeAIPanel()" aria-label="Close AI panel" style="background: transparent; border: none; color: white; cursor: pointer;">×</button>
+            </div>
+        </div>
+        <div class="ai-panel-body">
+            <div id="ai-response-area" class="ai-response-area">
+                <!-- Response injected here -->
+            </div>
+            
+            <div class="ai-actions">
+                <button class="btn btn-secondary ai-btn" onclick="requestAI('explain')">Explain this concept</button>
+                <button class="btn btn-secondary ai-btn" onclick="requestAI('hint')">Give me a hint</button>
+                <button class="btn btn-secondary ai-btn" onclick="requestAI('weaknesses')">What am I weak at?</button>
+                <button class="btn btn-secondary ai-btn" onclick="requestAI('recommendation')">What should I learn next?</button>
+                <button class="btn btn-secondary ai-btn" onclick="requestAI('learning-plan')">Make Me a Learning Plan</button>
+            </div>
+            
+            <div class="ai-input-row">
+                <input type="text" id="ai-custom-question" placeholder="Ask AI..." aria-label="Ask AI">
+                <button id="ai-ask-btn" class="btn btn-primary" onclick="requestAI('ask')" aria-label="Submit question">Ask</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/code-editor.js"></script>
+    <script src="/js/ai-assistant.js"></script>
     <script src="/js/lesson.js"></script>
 </body>
 </html>

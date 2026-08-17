@@ -91,6 +91,7 @@ class CodeEditor {
                     <div style="display: flex; gap: 0.5rem;">
                         <button class="btn btn-secondary" id="btn-run" style="font-weight: 600;">▶ Run Code</button>
                         <button class="btn btn-primary" id="btn-submit" style="font-weight: 600;">🚀 Submit Solution</button>
+                        <button class="btn btn-secondary" id="btn-ai-review" style="font-weight: 600; color: #00ff88; border-color: rgba(0, 255, 136, 0.5);">🤖 AI Code Review</button>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <button class="btn btn-secondary" id="btn-reset" style="font-size: 13px;">Reset</button>
@@ -196,6 +197,18 @@ class CodeEditor {
         if (btnClear) {
             btnClear.addEventListener('click', () => {
                 this.clearOutput();
+            });
+        }
+
+        const btnAiReview = document.getElementById('btn-ai-review');
+        if (btnAiReview) {
+            btnAiReview.addEventListener('click', () => {
+                if (typeof requestAICodeReview === 'function') {
+                    const code = document.getElementById('code-textarea').value;
+                    requestAICodeReview(this.language, code, this.exercise ? this.exercise.description : "Code problem");
+                } else {
+                    alert("AI Assistant script is not loaded properly.");
+                }
             });
         }
 

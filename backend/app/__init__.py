@@ -48,5 +48,8 @@ def create_app(config_class=Config):
     app.register_blueprint(performance_bp, url_prefix='/api/performance')
     app.register_blueprint(courses_bp, url_prefix='/api/courses')
     app.register_blueprint(code_bp, url_prefix='/api/code')
+    
+    from app.routes.ai_agent import ai_bp
+    app.register_blueprint(ai_bp, url_prefix='/api/ai')
 
     return app

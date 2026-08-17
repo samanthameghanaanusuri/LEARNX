@@ -5,10 +5,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'learnx-secure-dev-key-129847')
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'learnx-secure-dev-key-129847'
     
-    # Handle Render's postgres:// vs postgresql:// SQLAlchemy requirement
-    db_url = os.environ.get('DATABASE_URL', 'sqlite:///learnx.db')
+    db_url = os.environ.get('DATABASE_URL')
+    
+    if not db_url:
+        db_url = 'sqlite:///learnx.db'
+        
     if db_url.startswith('postgres://'):
         db_url = db_url.replace('postgres://', 'postgresql://', 1)
         
@@ -23,3 +26,6 @@ class Config:
         'p_guess': 0.20,
         'p_slip': 0.10
     }
+
+    AI_API_KEY = os.environ.get('AI_API_KEY')
+    AI_MODEL = os.environ.get('AI_MODEL') or 'gemini-3.7-flash'
