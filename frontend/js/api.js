@@ -11,7 +11,7 @@ const getApiBase = () => {
     // PRODUCTION / NETLIFY
     // If the frontend is hosted on Netlify, the requests must point to a deployed backend.
     // Replace 'YOUR_DEPLOYED_BACKEND_URL' with the actual production Flask server URL (e.g., https://learnx-backend.onrender.com).
-    return 'https://YOUR_DEPLOYED_BACKEND_URL/api'; 
+    return 'https://learnx-v8ia.onrender.com/api'; 
 };
 
 const API_BASE = getApiBase();
