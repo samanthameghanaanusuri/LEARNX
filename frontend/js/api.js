@@ -1,4 +1,20 @@
-const API_BASE = '/api';
+const getApiBase = () => {
+    // If running locally (e.g. VS Code Live Server on port 5500, or directly via file://)
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+    
+    if (isLocal) {
+        return 'http://127.0.0.1:5000/api';
+    }
+    
+    // PRODUCTION / NETLIFY
+    // If the frontend is hosted on Netlify, the requests must point to a deployed backend.
+    // Replace 'YOUR_DEPLOYED_BACKEND_URL' with the actual production Flask server URL (e.g., https://learnx-backend.onrender.com).
+    return 'https://YOUR_DEPLOYED_BACKEND_URL/api'; 
+};
+
+const API_BASE = getApiBase();
 
 async function apiRequest(endpoint, method = 'GET', body = null) {
     const headers = {
