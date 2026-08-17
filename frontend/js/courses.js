@@ -193,27 +193,40 @@ function renderCourses(courses) {
 }
 
 function filterCourses() {
-    const search = document.getElementById('course-search').value.toLowerCase();
-    const difficulty = document.getElementById('filter-difficulty').value;
+    const searchInput = document.getElementById('course-search').value;
+    const search = searchInput ? searchInput.toLowerCase().trim() : '';
+    const difficulty = document.getElementById('filter-difficulty').value.toLowerCase();
     const sort = document.getElementById('filter-sort').value;
 
     // Get active category tab
     const activeTab = document.querySelector('.category-tab.active');
-    const category = activeTab ? activeTab.getAttribute('data-val') : 'all';
+    const category = activeTab ? activeTab.getAttribute('data-val').toLowerCase() : 'all';
 
     let filtered = allCourses.filter(course => {
-        const matchSearch = course.title.toLowerCase().includes(search) || course.description.toLowerCase().includes(search);
-        const matchCategory = category === 'all' || course.category === category;
-        const matchDifficulty = difficulty === 'all' || course.difficulty.includes(difficulty);
+        const titleStr = (course.title || '').toLowerCase();
+        const descStr = (course.description || '').toLowerCase();
+        const catStr = (course.category || '').toLowerCase();
+        const diffStr = (course.difficulty || '').toLowerCase();
+
+        let matchSearch = true;
+        if (search !== '') {
+            matchSearch = titleStr.includes(search) || 
+                          descStr.includes(search) || 
+                          catStr.includes(search) || 
+                          diffStr.includes(search);
+        }
+
+        const matchCategory = category === 'all' || catStr.split(',').map(s => s.trim()).includes(category);
+        const matchDifficulty = difficulty === 'all' || diffStr.includes(difficulty);
         
         return matchSearch && matchCategory && matchDifficulty;
     });
 
     // Sorting
     if (sort === 'title-asc') {
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
     } else if (sort === 'title-desc') {
-        filtered.sort((a, b) => b.title.localeCompare(a.title));
+        filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
     }
 
     renderCourses(filtered);
