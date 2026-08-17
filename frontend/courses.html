@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - LEARNX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/courses.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>LEARN<span>X</span></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/dashboard.html">Dashboard</a></li>
+                <li class="active"><a href="/courses.html">Courses</a></li>
+                <li><a href="/subject.html">Subjects</a></li>
+                <li><a href="/progress.html">Progress</a></li>
+            </ul>
+            <div class="user-profile user-dropdown">
+                <div class="avatar" id="avatar-icon">U</div>
+                <span id="navbar-username">Student ▼</span>
+                <div class="user-dropdown-content">
+                    <a href="#" id="logout-btn">Log Out</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2>Course Catalog</h2>
+                    <p style="color: var(--text-secondary); margin: 0.25rem 0 0 0; font-size: 0.95rem;">
+                        Explore our wide range of courses and start your learning journey today.
+                    </p>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="course-search" placeholder="Search courses...">
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Filter and sorting row -->
+                <div class="filter-row">
+                    <select id="filter-difficulty">
+                        <option value="all">All Levels</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+
+                    <select id="filter-sort">
+                        <option value="default">Sort: Default</option>
+                        <option value="title-asc">Title: A to Z</option>
+                        <option value="title-desc">Title: Z to A</option>
+                    </select>
+                </div>
+
+                <!-- Horizontal category pills -->
+                <div class="category-tabs" id="category-tabs">
+                    <button class="category-tab active" data-val="all">All</button>
+                    <button class="category-tab" data-val="Programming">Programming</button>
+                    <button class="category-tab" data-val="Web Development">Web Development</button>
+                    <button class="category-tab" data-val="Programming Languages">Languages</button>
+                    <button class="category-tab" data-val="cpp">C++</button>
+                    <button class="category-tab" data-val="text">Cyber Security</button>
+                    <button class="category-tab" data-val="sql">Database</button>
+                    <button class="category-tab" data-val="python">Data Structures</button>
+                </div>
+
+                <!-- Dynamic Course Grid -->
+                <div class="course-grid" id="course-grid">
+                    <div class="loading">Loading courses...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/courses.js"></script>
+</body>
+</html>

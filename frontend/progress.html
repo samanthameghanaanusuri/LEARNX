@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARNX — Knowledge Tracing Progress</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Chart.js CDN for interactive visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .progress-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .concept-pill-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            list-style: none;
+        }
+        .concept-pill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+        }
+        .delta-value {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .delta-positive {
+            color: var(--color-success);
+        }
+        .delta-negative {
+            color: var(--color-danger);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        @media (max-width: 900px) {
+            .progress-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="/dashboard.html" class="nav-brand">⚡ LEARNX</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard.html" class="nav-item">Dashboard</a></li>
+                <li><a href="/subject.html" class="nav-item">Subjects</a></li>
+                <li><a href="/progress.html" class="nav-item active">Progress</a></li>
+                <li style="border-left: 1px solid var(--border-card); padding-left: 1rem;">
+                    <span id="navbar-username" style="font-weight: 700; color: var(--text-primary);">Student</span>
+                </li>
+                <li><button onclick="LEARNX_API.logout()" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Knowledge Tracing Analytics</h2>
+        <p style="margin-bottom: 2rem;">
+            Cognitive estimations computed dynamically using the Bayesian Knowledge Tracing (BKT) framework.
+        </p>
+
+        <div class="progress-grid">
+            
+            <!-- Left Panel: Concept Rankings & Recent Changes -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Strongest / Weakest -->
+                <div class="glass-card" style="padding: 1.5rem;">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-card); padding-bottom: 0.5rem;">
+                        Concept Mastery Rankings
+                    </h3>
+                    
+                    <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--color-success); margin-bottom: 0.5rem;">
+                        Strongest Concepts (Mastered)
+                    </h4>
+                    <ul class="concept-pill-list" id="strongest-concepts-list" style="margin-bottom: 1.5rem;">
+                        <li style="font-size: 0.85rem; color: var(--text-secondary);">No mastered concepts yet.</li>
+                    </ul>
+
+                    <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--color-danger); margin-bottom: 0.5rem;">
+                        Weakest Concepts (Requires Recovery)
+                    </h4>
+                    <ul class="concept-pill-list" id="weakest-concepts-list">
+                        <li style="font-size: 0.85rem; color: var(--text-secondary);">No assessed concept weaknesses.</li>
+                    </ul>
+                </div>
+
+                <!-- BKT Delta Log -->
+                <div class="glass-card" style="padding: 1.5rem;">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-card); padding-bottom: 0.5rem;">
+                        Recent BKT Delta Updates
+                    </h3>
+                    <ul class="concept-pill-list" id="recent-changes-list">
+                        <li style="font-size: 0.85rem; color: var(--text-secondary); text-align: center;">
+                            Answer questions to view BKT updates.
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Right Panel: BKT Trajectory Chart -->
+            <div class="glass-card" style="min-height: 450px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem;">Bayesian Mastery Trajectory</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;" id="chart-description">
+                        Plotting the step-by-step update in probability of mastery for your most recently active concept.
+                    </p>
+                    
+                    <div id="chart-placeholder" class="flex-center" style="height: 300px; background: rgba(0,0,0,0.15); border-radius: 10px; border: 1px dashed var(--border-card);">
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+                            Complete a diagnostic test or log attempts to view BKT learning curves.
+                        </p>
+                    </div>
+
+                    <div class="chart-container" id="chart-canvas-container" style="display: none;">
+                        <canvas id="trajectoryChart"></canvas>
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.75rem; color: var(--text-secondary); border-top: 1px solid var(--border-card); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: space-between;">
+                    <span>Y-Axis: P(Mastery)</span>
+                    <span>X-Axis: Sequential Question Attempts</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 LEARNX Engine.</p>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        checkAuth();
+    </script>
+    <script src="/js/progress.js"></script>
+</body>
+</html>

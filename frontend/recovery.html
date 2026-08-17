@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARNX — Targeted Recovery Intervention</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .recovery-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1.4fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        .study-guide-content {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--border-card);
+            overflow-y: auto;
+            max-height: 450px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .study-guide-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-primary);
+        }
+        .study-guide-content ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .study-guide-content li {
+            margin-bottom: 0.5rem;
+        }
+        .study-guide-content strong {
+            color: var(--text-primary);
+        }
+        .option-card {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .option-card.selected {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--color-primary);
+        }
+        .option-radio {
+            margin-right: 0.75rem;
+            accent-color: var(--color-primary);
+        }
+        @media (max-width: 900px) {
+            .recovery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="/dashboard.html" class="nav-brand">⚡ LEARNX</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard.html" class="nav-item">Dashboard</a></li>
+                <li><a href="/subject.html" class="nav-item">Subjects</a></li>
+                <li><a href="/progress.html" class="nav-item">Progress</a></li>
+                <li style="border-left: 1px solid var(--border-card); padding-left: 1rem;">
+                    <span id="navbar-username" style="font-weight: 700; color: var(--text-primary);">Student</span>
+                </li>
+                <li><button onclick="LEARNX_API.logout()" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="loading-recovery" class="glass-card flex-center" style="min-height: 400px;">
+            <p>Loading recovery intervention package...</p>
+        </div>
+
+        <div id="no-active-recovery" class="glass-card flex-center" style="display: none; min-height: 400px; flex-direction: column; text-align: center; gap: 1.5rem;">
+            <div style="font-size: 3rem;">✨</div>
+            <h2 style="font-size: 1.75rem;">No Active Blocker Detected</h2>
+            <p style="color: var(--text-secondary); max-width: 500px;">
+                You currently have no active recovery assignments. Your concepts are all in good standing!
+            </p>
+            <a href="/dashboard.html" class="btn btn-primary">Go to Dashboard</a>
+        </div>
+
+        <div id="recovery-panel" class="recovery-grid" style="display: none;">
+            
+            <!-- Left panel: Guide -->
+            <div class="glass-card" style="display: flex; flex-direction: column; gap: 1rem; min-height: 450px;">
+                <div>
+                    <span class="badge badge-prereq">Recovery Phase</span>
+                    <h2 style="font-size: 1.5rem; margin-top: 0.25rem; margin-bottom: 0.5rem;" id="recovery-concept-title">Concept Guide</h2>
+                    <p style="font-size: 0.9rem; margin-bottom: 1rem;">
+                        Read the study guide carefully to fill the prerequisite gap, then complete the verification test on the right.
+                    </p>
+                </div>
+                
+                <div class="study-guide-content" id="recovery-guide-content">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Right panel: Re-assessment -->
+            <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 450px;">
+                <div>
+                    <h2 style="font-size: 1.25rem; margin-bottom: 0.25rem;">Recovery Verification</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Submit the correct response to verify recovery and advance your estimated concept mastery score.
+                    </p>
+                    
+                    <div id="recovery-test-box">
+                        <h4 id="recovery-question-text" style="font-size: 1.05rem; line-height: 1.5; margin-bottom: 1rem;">
+                            Question Loading...
+                        </h4>
+                        
+                        <div id="recovery-options-list">
+                            <!-- Options list loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <div id="recovery-feedback" class="alert" style="display: none;"></div>
+                    <button class="btn btn-primary" id="recovery-submit-btn" onclick="submitRecovery()" style="width: 100%;">
+                        Verify Recovery Mastery
+                    </button>
+                    <a id="recovery-dash-btn" href="/dashboard.html" class="btn btn-secondary" style="width: 100%; display: none;">
+                        Return to Dashboard
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 LEARNX Engine.</p>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        checkAuth();
+    </script>
+    <script src="/js/recovery.js"></script>
+</body>
+</html>

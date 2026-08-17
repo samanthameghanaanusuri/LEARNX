@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARNX - Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <nav class="navbar glass-panel" style="border-radius: 0; position: sticky; top: 0; z-index: 100;">
+        <div class="nav-brand">
+            <span class="nav-logo">⚡</span> LEARNX
+        </div>
+        <div class="nav-links">
+            <a href="/courses.html">Catalog</a>
+            <a href="/dashboard.html" class="active">Dashboard</a>
+            <a href="/subject.html">Subjects</a>
+            <a href="/progress.html">Progress</a>
+            <div class="dropdown">
+                <span style="color: var(--text-secondary); cursor: pointer;" id="navbar-username">Student ▼</span>
+                <div class="dropdown-content">
+                    <a href="#" id="logout-btn">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Main Column -->
+        <div>
+            <div class="glass-panel" style="margin-bottom: 2rem;">
+                <h1 style="margin-top: 0;" id="welcome-message">Welcome back!</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 0;">Continue your learning journey.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="stat-total-courses">0</h3>
+                    <p>Total Courses</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-courses-enrolled">0</h3>
+                    <p>Courses Enrolled</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-overall-progress">0%</h3>
+                    <p>Overall Progress</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-learning-time">0m</h3>
+                    <p>Learning Time</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-streak">0 days</h3>
+                    <p>Current Streak</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-longest-streak">0 days</h3>
+                    <p>Longest Streak</p>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 1rem;">My Courses</h2>
+            <div class="course-list" id="my-courses-list">
+                <!-- Populated by JS -->
+                <div class="glass-panel text-center">Loading courses...</div>
+            </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div>
+            <div class="glass-panel" style="margin-bottom: 2rem; border-left: 4px solid var(--color-primary);" id="continue-learning-panel">
+                <h3 style="margin-top: 0;">Continue Learning</h3>
+                <div id="continue-learning-content">
+                    <p class="text-secondary" style="font-size: 0.875rem; margin: 0;">You have no active lessons in progress.</p>
+                    <a href="/courses.html" class="btn btn-primary" style="display: block; text-align: center; margin-top: 1rem;">Browse Courses</a>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="margin-bottom: 2rem;">
+                <h3 style="margin-top: 0;">Cognitive Diagnostics</h3>
+                <p style="font-size: 0.875rem; color: var(--text-secondary);">Based on your recent performance, our AI has identified your strengths and areas for improvement.</p>
+                
+                <h4 style="margin-bottom: 0.5rem; color: var(--color-success);">Strong Concepts</h4>
+                <div id="diag-strong" style="margin-bottom: 1rem;">
+                    <span class="text-secondary" style="font-size: 0.875rem;">Not enough data yet.</span>
+                </div>
+
+                <h4 style="margin-bottom: 0.5rem; color: var(--color-danger);">Needs Practice</h4>
+                <div id="diag-weak">
+                    <span class="text-secondary" style="font-size: 0.875rem;">Not enough data yet.</span>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="margin-bottom: 2rem;">
+                <h3 style="margin-top: 0;">Recent Activity</h3>
+                <div id="recent-activity-list">
+                    <p class="text-secondary" style="font-size: 0.875rem; margin: 0;">No recent activity recorded.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

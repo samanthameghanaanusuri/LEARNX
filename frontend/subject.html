@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARNX — Course Subjects</title>
+    <meta name="description" content="LEARNX diagnostic subject catalog — take cognitive assessments and explore concept dependency maps.">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/subjects.css">
+</head>
+<body>
+
+    <!-- Navbar — consistent with LEARNX design system, no student name -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard.html" class="nav-brand">⚡ LEARNX</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard.html" class="nav-item">Dashboard</a></li>
+                <li><a href="/subject.html" class="nav-item active">Subjects</a></li>
+                <li><a href="/progress.html" class="nav-item">Progress</a></li>
+                <li><a href="#" onclick="LEARNX_API.logout()" class="nav-item logout-link">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="subjects-page-main">
+        <div class="subjects-page-header">
+            <h2>Course Subjects Catalog</h2>
+            <p class="subjects-subtitle">
+                Select a subject to take a diagnostic assessment or inspect its concept dependency tree map.
+            </p>
+        </div>
+
+        <div class="subjects-grid" id="catalog-container">
+            <!-- Dynamic Subject Catalog -->
+            <div class="subjects-loading">
+                <p>Loading course subjects...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="subjects-footer">
+        <div>
+            <p>&copy; 2026 LEARNX Engine.</p>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        checkAuth();
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('catalog-container');
+            try {
+                const subData = await LEARNX_API.getSubjects();
+                container.innerHTML = '';
+                
+                for (const sub of subData.subjects) {
+                    // Fetch concepts for this subject to list them
+                    const mapData = await LEARNX_API.getSubjectMap(sub.id);
+                    
+                    const card = document.createElement('div');
+                    card.className = 'subject-card';
+                    
+                    let conceptItemsHtml = '';
+                    mapData.concepts.forEach(c => {
+                        const prereqNames = c.prerequisites.map(pid => {
+                            const found = mapData.concepts.find(item => item.id === pid);
+                            return found ? found.name : 'Unknown';
+                        });
+                        
+                        const prereqBadge = prereqNames.length > 0 
+                            ? `<span class="concept-dep-badge requires">Requires: ${prereqNames.join(', ')}</span>`
+                            : `<span class="concept-dep-badge fundamental">Fundamental</span>`;
+
+                        conceptItemsHtml += `
+                            <li class="subject-concept-item">
+                                <span class="subject-concept-name">${c.name}</span>
+                                ${prereqBadge}
+                            </li>
+                        `;
+                    });
+
+                    card.innerHTML = `
+                        <span class="subject-badge">${sub.code}</span>
+                        <h3 class="subject-title">${sub.name}</h3>
+                        <p class="subject-description">${sub.description}</p>
+                        
+                        <h4 class="concepts-section-label">Subject Concepts DAG Map</h4>
+                        <ul class="subject-concept-list">
+                            ${conceptItemsHtml}
+                        </ul>
+                        
+                        <div class="subject-actions">
+                            <a href="/assessment.html?subject_id=${sub.id}" class="btn btn-primary">Start Diagnostic Test</a>
+                            <a href="/diagnosis.html?subject_id=${sub.id}" class="btn btn-secondary">View Concept Map</a>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="subjects-error">Failed to load course catalog.</div>`;
+            }
+        });
+    </script>
+</body>
+</html>

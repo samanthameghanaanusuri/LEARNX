@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARNX — Diagnostic Assessment</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .assessment-container {
+            max-width: 700px;
+            margin: 2rem auto;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .option-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .option-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .option-card.selected {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.15);
+        }
+        .option-radio {
+            margin-right: 1rem;
+            accent-color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="/dashboard.html" class="nav-brand">⚡ LEARNX</a>
+            <ul class="nav-links">
+                <li><a href="/dashboard.html" class="nav-item">Dashboard</a></li>
+                <li><a href="/subject.html" class="nav-item">Subjects</a></li>
+                <li><a href="/progress.html" class="nav-item">Progress</a></li>
+                <li style="border-left: 1px solid var(--border-card); padding-left: 1rem;">
+                    <span id="navbar-username" style="font-weight: 700; color: var(--text-primary);">Student</span>
+                </li>
+                <li><button onclick="LEARNX_API.logout()" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="loading-container" class="glass-card flex-center" style="min-height: 400px;">
+            <p>Fetching diagnostic assessment questions...</p>
+        </div>
+
+        <div id="assessment-panel" class="glass-card assessment-container" style="display: none;">
+            <div>
+                <div class="flex-between" style="border-bottom: 1px solid var(--border-card); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <span id="subject-badge" class="badge badge-prereq">DBMS</span>
+                        <span id="concept-badge" class="badge badge-unassessed" style="margin-left: 0.5rem;">Relations</span>
+                    </div>
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">
+                        Question <span id="current-question-num">1</span> of <span id="total-questions-num">10</span>
+                    </div>
+                </div>
+
+                <h3 id="question-text" style="font-size: 1.25rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                    Question Text placeholder?
+                </h3>
+
+                <div class="option-container" id="options-list">
+                    <!-- Dynamic Options -->
+                </div>
+            </div>
+
+            <div class="flex-between" style="margin-top: 2rem; border-top: 1px solid var(--border-card); padding-top: 1.5rem;">
+                <button class="btn btn-secondary" id="prev-btn" onclick="prevQuestion()" disabled>Back</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next</button>
+            </div>
+        </div>
+
+        <div id="results-panel" class="glass-card flex-center" style="display: none; min-height: 400px; flex-direction: column; text-align: center; gap: 1.5rem;">
+            <div style="font-size: 3.5rem;">📊</div>
+            <h2 style="font-size: 2rem;">Assessment Complete!</h2>
+            <p style="font-size: 1.1rem; max-width: 500px;" id="results-summary">
+                You answered 8 out of 10 questions correctly (80% accuracy).
+            </p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a id="results-diag-btn" href="/diagnosis.html" class="btn btn-primary">Run Concept Failure Diagnosis</a>
+                <a href="/dashboard.html" class="btn btn-secondary">Go to Dashboard</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 LEARNX Engine.</p>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script>
+        checkAuth();
+    </script>
+    <script src="/js/assessment.js"></script>
+</body>
+</html>
