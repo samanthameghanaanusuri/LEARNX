@@ -98,6 +98,9 @@ async function requestAI(actionType) {
     responseArea.innerHTML += `<div id="${loadingId}" class="loading" style="margin-bottom: 1rem; padding: 10px; background: rgba(0,255,136,0.1); border-radius: 6px;">🧠 AI is analyzing your learning progress...</div>`;
     scrollToBottom();
 
+    const t_request_start = performance.now();
+    console.log(`[LATENCY] Frontend request start: 0ms`);
+
     aiAbortController = new AbortController();
     const timeoutId = setTimeout(() => aiAbortController.abort(), 30000); // 30 second timeout
 
@@ -116,9 +119,14 @@ async function requestAI(actionType) {
         }
 
         const response = await fetch(API_BASE + endpoint, fetchOptions);
+        const t_backend_response = performance.now();
+        console.log(`[LATENCY] Backend response received at: ${(t_backend_response - t_request_start).toFixed(2)}ms`);
+        
         clearTimeout(timeoutId);
         
         const data = await response.json();
+        const t_json_parsed = performance.now();
+        console.log(`[LATENCY] JSON parsed at: ${(t_json_parsed - t_request_start).toFixed(2)}ms`);
         
         // Remove loading indicator
         const loadingEl = document.getElementById(loadingId);
@@ -136,6 +144,11 @@ async function requestAI(actionType) {
                 };
             }
             renderAIResponse(actionType, data, responseArea);
+            const t_rendered = performance.now();
+            console.log(`[LATENCY] Frontend response rendered at: ${(t_rendered - t_request_start).toFixed(2)}ms`);
+            if (data._debug_latency) {
+                console.log(`[LATENCY BACKEND METRICS]`, data._debug_latency);
+            }
         }
         
     } catch (error) {

@@ -19,6 +19,7 @@
     --color-danger-glow: rgba(239, 68, 68, 0.2);
     --font-main: 'Plus Jakarta Sans', sans-serif;
     --shadow-glow: 0 0 20px var(--color-primary-glow);
+    --app-width: 520px;
 }
 
 * {
@@ -70,11 +71,11 @@ a:hover {
 }
 
 /* Layout Utilities */
-.container {
-    max-width: 1200px;
-    width: 90%;
-    margin: 0 auto;
-    padding: 2rem 0;
+.container, .app-container {
+    width: min(calc(100% - 24px), var(--app-width, 520px));
+    box-sizing: border-box;
+    margin-inline: auto;
+    padding: 1.5rem 0;
 }
 
 .flex-between {
@@ -114,22 +115,10 @@ a:hover {
 /* Sequential Lesson Layout */
 .lesson-layout {
     display: grid;
-    grid-template-columns: 280px minmax(0, 850px) 280px;
-    gap: 2rem;
-    justify-content: center;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
     align-items: start;
-    padding: 2rem 0;
-}
-
-@media (max-width: 1400px) {
-    .lesson-layout {
-        grid-template-columns: 260px minmax(0, 850px);
-    }
-}
-@media (max-width: 1100px) {
-    .lesson-layout {
-        grid-template-columns: minmax(0, 850px);
-    }
+    padding: 1rem 0;
 }
 
 .lesson-sidebar {
@@ -189,6 +178,7 @@ a:hover {
     top: 0;
     z-index: 100;
     padding: 1rem 0;
+    width: 100%;
 }
 
 .nav-brand {
@@ -645,6 +635,12 @@ footer {
     overflow: hidden;
     backdrop-filter: blur(10px);
     transition: height 0.3s ease, transform 0.3s ease;
+    
+    /* Align with constrained app width */
+    max-width: var(--app-width);
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .ai-panel-header {
@@ -717,11 +713,8 @@ footer {
 /* Responsive constraints */
 @media (min-width: 769px) {
     .ai-assistant-floating {
-        width: 360px;
-        max-width: calc(100vw - 24px);
-        height: min(620px, calc(100vh - 110px));
-        right: 18px;
-        top: 90px;
+        height: min(620px, calc(100vh - 90px));
+        top: 75px;
     }
 }
 
@@ -730,8 +723,6 @@ footer {
         width: calc(100vw - 20px);
         height: 70vh;
         max-height: 700px;
-        right: 10px;
-        left: 10px;
         bottom: 10px;
         top: auto;
     }
@@ -748,8 +739,6 @@ footer {
     .ai-assistant-floating {
         width: calc(100vw - 16px);
         height: 75vh;
-        right: 8px;
-        left: 8px;
         bottom: 8px;
     }
     .ai-actions {

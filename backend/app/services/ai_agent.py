@@ -35,7 +35,20 @@ def get_recent_failures(student_id):
     return ", ".join([f"Exercise {f.exercise_id}" for f in recent]) if recent else "None"
 
 def call_ai(prompt, is_json=True):
-    return provider_manager.generate(prompt, is_json)
+    import time
+    t_start = time.time()
+    t_context = time.time()
+    t_api = time.time()
+    result = provider_manager.generate(prompt, is_json)
+    t_end = time.time()
+    if isinstance(result, dict):
+        result["_debug_timing"] = {
+            "start": t_start,
+            "context": t_context,
+            "api": t_api,
+            "end": t_end
+        }
+    return result
 
 def ask_tutor(student_id, course_id, lesson_id, question):
     lesson_ctx = get_lesson_context(lesson_id)

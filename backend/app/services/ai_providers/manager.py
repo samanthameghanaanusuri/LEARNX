@@ -184,7 +184,8 @@ Rules:
             "success": False,
             "available": False,
             "error_type": error_type,
-            "message": user_message
+            "message": user_message,
+            "_debug_latency": { "primary_error": str(primary_exception) }
         }
 
     def _process_success_response(self, raw_text: str, is_json: bool, model_name: str, provider_name: str):
@@ -199,3 +200,4 @@ Rules:
             return res_json
         else:
             return {"available": True, "success": True, "text": raw_text, "_provider_used": provider_name}
+

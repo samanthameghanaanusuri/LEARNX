@@ -1,3 +1,10 @@
+// Apply app width immediately
+(function() {
+    const savedWidth = localStorage.getItem('learnx_app_width');
+    if (savedWidth) {
+        document.documentElement.style.setProperty('--app-width', savedWidth + 'px');
+    }
+})();
 const getApiBase = () => {
     // If running locally (e.g. VS Code Live Server on port 5500, or directly via file://)
     const isLocal = window.location.hostname === 'localhost' || 
@@ -228,3 +235,58 @@ document.addEventListener('DOMContentLoaded', () => {
         userNameEl.textContent = studentName ? studentName : 'Student';
     }
 });
+// Width Configurator UI
+document.addEventListener('DOMContentLoaded', () => {
+    const configContainer = document.createElement('div');
+    configContainer.style.position = 'fixed';
+    configContainer.style.bottom = '20px';
+    configContainer.style.left = '20px';
+    configContainer.style.zIndex = '10000';
+    configContainer.style.background = 'rgba(10, 15, 26, 0.9)';
+    configContainer.style.padding = '10px';
+    configContainer.style.borderRadius = '8px';
+    configContainer.style.border = '1px solid rgba(255,255,255,0.2)';
+    configContainer.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+    configContainer.style.display = 'flex';
+    configContainer.style.flexDirection = 'column';
+    configContainer.style.gap = '8px';
+    configContainer.style.backdropFilter = 'blur(10px)';
+    configContainer.style.opacity = '0.5';
+    configContainer.style.transition = 'opacity 0.2s';
+    
+    configContainer.addEventListener('mouseenter', () => configContainer.style.opacity = '1');
+    configContainer.addEventListener('mouseleave', () => configContainer.style.opacity = '0.5');
+
+    const label = document.createElement('label');
+    label.textContent = 'UI Width';
+    label.style.fontSize = '11px';
+    label.style.color = '#8F95A3';
+    label.style.fontFamily = 'sans-serif';
+    label.style.textAlign = 'center';
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '320';
+    slider.max = '800'; // up to 800 for slightly wider tablets if wanted
+    slider.value = localStorage.getItem('learnx_app_width') || '520';
+    
+    const valueDisplay = document.createElement('span');
+    valueDisplay.textContent = slider.value + 'px';
+    valueDisplay.style.fontSize = '12px';
+    valueDisplay.style.color = '#fff';
+    valueDisplay.style.textAlign = 'center';
+
+    slider.addEventListener('input', (e) => {
+        const val = e.target.value;
+        valueDisplay.textContent = val + 'px';
+        document.documentElement.style.setProperty('--app-width', val + 'px');
+        localStorage.setItem('learnx_app_width', val);
+    });
+
+    configContainer.appendChild(label);
+    configContainer.appendChild(slider);
+    configContainer.appendChild(valueDisplay);
+
+    document.body.appendChild(configContainer);
+});
+
