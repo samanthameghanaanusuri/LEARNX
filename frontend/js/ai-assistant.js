@@ -10,7 +10,6 @@ function setAiLoadingState(isLoading) {
     isAiRequestRunning = isLoading;
     const buttons = document.querySelectorAll('#ai-assistant-panel button');
     buttons.forEach(btn => {
-        // don't disable minimize/close buttons
         if (btn.id === 'ai-minimize-btn' || btn.id === 'ai-close-btn') return;
         
         btn.disabled = isLoading;
@@ -39,16 +38,27 @@ function scrollToBottom() {
     }
 }
 
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 async function requestAI(actionType) {
     if (isAiRequestRunning) return; // Prevent duplicate requests
     
     const urlParams = new URLSearchParams(window.location.search);
-    const courseId = urlParams.get('course_id') || urlParams.get('id');
-    const lessonId = window.currentLessonId || null;
-    const conceptName = window.currentConceptName || "Current Lesson Concept";
+    const lessonId = urlParams.get('id') || urlParams.get('lesson_id') || window.currentLessonId || (window.lessonData && window.lessonData.id) || null;
+    const courseId = urlParams.get('course_id') || (window.lessonData && window.lessonData.course_id) || null;
+    const conceptName = window.currentConceptName || (window.lessonData && window.lessonData.title) || "Current Lesson Concept";
     
     const responseArea = document.getElementById('ai-response-area');
-    
+    if (!responseArea) return;
+
     let endpoint = `/ai/${actionType}`;
     let method = 'POST';
     let body = {
@@ -56,53 +66,93 @@ async function requestAI(actionType) {
         lesson_id: lessonId
     };
     
+    let userPromptText = "";
+
     if (actionType === 'ask') {
         const inputField = document.getElementById('ai-custom-question');
-        const question = inputField.value.trim();
+        const question = inputField ? inputField.value.trim() : "";
         if (!question) {
-            responseArea.innerHTML += '<div style="color: var(--color-warning); margin-bottom: 1rem; padding: 10px;">Please type a question first.</div>';
+            const warningEl = document.createElement('div');
+            warningEl.style.color = 'var(--color-warning)';
+            warningEl.style.padding = '8px';
+            warningEl.style.fontSize = '13px';
+            warningEl.textContent = 'Please type a question first.';
+            responseArea.appendChild(warningEl);
             scrollToBottom();
             return;
         }
         body.question = question;
-        inputField.value = ''; // clear input
+        userPromptText = question;
+        if (inputField) {
+            inputField.value = ''; // clear input
+            inputField.style.height = 'auto'; // reset height
+            inputField.focus(); // focus again
+        }
     } else if (actionType === 'explain') {
         body.concept = conceptName;
+        userPromptText = `Explain concept: ${conceptName}`;
     } else if (actionType === 'hint') {
         if (!window.currentHintLevel) window.currentHintLevel = 1;
         if (window.currentHintLevel > 5) {
-            responseArea.innerHTML += '<div style="color: var(--color-warning); margin-bottom: 1rem; padding: 10px;">Maximum hint level reached. Please try your best!</div>';
+            const warn = document.createElement('div');
+            warn.style.color = 'var(--color-warning)';
+            warn.style.padding = '8px';
+            warn.style.fontSize = '13px';
+            warn.textContent = 'Maximum hint level reached. Please try your best!';
+            responseArea.appendChild(warn);
             scrollToBottom();
             return;
         }
         body.hint_level = window.currentHintLevel;
+        userPromptText = `Give me a hint (Level ${window.currentHintLevel})`;
         window.currentHintLevel++;
-    } else if (actionType === 'weaknesses' || actionType === 'recommendation' || actionType === 'learning-plan') {
+    } else if (actionType === 'weaknesses') {
         method = 'GET';
         body = null;
+        userPromptText = "What am I weak at?";
+    } else if (actionType === 'recommendation') {
+        method = 'GET';
+        body = null;
+        userPromptText = "What should I learn next?";
+    } else if (actionType === 'learning-plan') {
+        method = 'GET';
+        body = null;
+        userPromptText = "Make Me a Learning Plan";
     }
 
-    // Check cache for stateless requests
+    // 1. Immediately Render User Question Bubble in Chat History
+    const userBubble = document.createElement('div');
+    userBubble.className = 'chat-bubble user-bubble';
+    userBubble.innerHTML = `
+        <div class="bubble-sender" style="color: #6366f1;">YOU</div>
+        <div style="font-size: 14px; color: var(--text-primary); white-space: pre-wrap;">${escapeHtml(userPromptText)}</div>
+    `;
+    responseArea.appendChild(userBubble);
+
+    // 2. Immediately Render Temporary AI Loading Bubble
+    const loadingId = 'loading-' + Date.now();
+    const aiLoadingBubble = document.createElement('div');
+    aiLoadingBubble.id = loadingId;
+    aiLoadingBubble.className = 'chat-bubble ai-bubble loading-bubble';
+    aiLoadingBubble.innerHTML = `
+        <div class="bubble-sender" style="color: #00ff88;">LEARNX AI</div>
+        <div style="font-size: 13px; color: var(--text-secondary); font-style: italic;">Thinking...</div>
+    `;
+    responseArea.appendChild(aiLoadingBubble);
+    scrollToBottom();
+
+    // Check cache for stateless requests if available
     const cacheKey = `${actionType}_${lessonId}_${conceptName}`;
     if (['explain', 'weaknesses', 'recommendation'].includes(actionType)) {
         if (aiCache[cacheKey] && (Date.now() - aiCache[cacheKey].timestamp < 300000)) {
-            // Cache hit (5 min expiry)
-            renderAIResponse(actionType, aiCache[cacheKey].data, responseArea);
+            renderAIResponseIntoBubble(actionType, aiCache[cacheKey].data, loadingId);
             return;
         }
     }
 
-    // Set loading state
     setAiLoadingState(true);
-    const loadingId = 'loading-' + Date.now();
-    responseArea.innerHTML += `<div id="${loadingId}" class="loading" style="margin-bottom: 1rem; padding: 10px; background: rgba(0,255,136,0.1); border-radius: 6px;">🧠 AI is analyzing your learning progress...</div>`;
-    scrollToBottom();
-
-    const t_request_start = performance.now();
-    console.log(`[LATENCY] Frontend request start: 0ms`);
-
     aiAbortController = new AbortController();
-    const timeoutId = setTimeout(() => aiAbortController.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => aiAbortController.abort(), 30000);
 
     try {
         let fetchOptions = {
@@ -119,51 +169,29 @@ async function requestAI(actionType) {
         }
 
         const response = await fetch(API_BASE + endpoint, fetchOptions);
-        const t_backend_response = performance.now();
-        console.log(`[LATENCY] Backend response received at: ${(t_backend_response - t_request_start).toFixed(2)}ms`);
-        
         clearTimeout(timeoutId);
         
         const data = await response.json();
-        const t_json_parsed = performance.now();
-        console.log(`[LATENCY] JSON parsed at: ${(t_json_parsed - t_request_start).toFixed(2)}ms`);
-        
-        // Remove loading indicator
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.remove();
 
         if (!response.ok || data.success === false || data.available === false) {
-            const errorMsg = data.message || data.error || 'AI is temporarily unavailable. Your learning progress is safe.';
-            responseArea.innerHTML += `<div class="execution-status error" style="padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">${DOMPurify.sanitize(errorMsg)}</div>`;
+            const errorMsg = data.message || data.error || "I couldn't process that request right now. Please try again.";
+            renderErrorIntoBubble(loadingId, errorMsg);
         } else {
-            // Cache the result if eligible
             if (['explain', 'weaknesses', 'recommendation'].includes(actionType)) {
                 aiCache[cacheKey] = {
                     timestamp: Date.now(),
                     data: data
                 };
             }
-            renderAIResponse(actionType, data, responseArea);
-            const t_rendered = performance.now();
-            console.log(`[LATENCY] Frontend response rendered at: ${(t_rendered - t_request_start).toFixed(2)}ms`);
-            if (data._debug_latency) {
-                console.log(`[LATENCY BACKEND METRICS]`, data._debug_latency);
-            }
+            renderAIResponseIntoBubble(actionType, data, loadingId);
         }
-        
     } catch (error) {
         clearTimeout(timeoutId);
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.remove();
-        
-        let errMsg = error.message;
+        let errMsg = "I couldn't process that request right now. Please try again.";
         if (error.name === 'AbortError') {
-            errMsg = 'AI is taking too long to respond. Please try again.';
-        } else {
-            errMsg = 'AI is temporarily unavailable. Your learning progress is safe.';
+            errMsg = 'AI response timed out. Please try again.';
         }
-        
-        responseArea.innerHTML += `<div class="execution-status error" style="padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">${DOMPurify.sanitize(errMsg)}</div>`;
+        renderErrorIntoBubble(loadingId, errMsg);
     } finally {
         setAiLoadingState(false);
         aiAbortController = null;
@@ -171,67 +199,71 @@ async function requestAI(actionType) {
     }
 }
 
-function renderAIResponse(actionType, data, container) {
+function renderAIResponseIntoBubble(actionType, data, loadingId) {
+    const bubble = document.getElementById(loadingId);
+    if (!bubble) return;
+
     let markdownText = "";
     
     if (actionType === 'ask') {
-        markdownText = `**Answer:**\n${data.answer}\n\n*Concepts:* ${data.concepts ? data.concepts.join(', ') : 'None'} (${data.difficulty})\n\n**Next Action:** *${data.next_action}*`;
+        markdownText = data.answer || "No answer provided.";
+        if (data.concepts && data.concepts.length > 0 && data.concepts[0] !== "Course Scope") {
+            markdownText += `\n\n*Concepts:* ${data.concepts.join(', ')}`;
+        }
     } else if (actionType === 'explain') {
         markdownText = `**What it is:**\n${data.what}\n\n**Why it matters:**\n${data.why}\n\n**How it works:**\n${data.how}\n\n**Examples:**\n${data.examples ? data.examples.map(e => '- ' + e).join('\n') : ''}\n\n**Common Mistake:**\n${data.mistake}\n\n**Quick Check:**\n*${data.check_question}*`;
     } else if (actionType === 'hint') {
-        if (data.hint) {
-            markdownText = "**Hint:**\n" + data.hint;
-        } else {
-            markdownText = "No hints available.";
-        }
+        markdownText = data.hint ? "**Hint:**\n" + data.hint : "No hints available.";
     } else if (actionType === 'weaknesses') {
         if (data.weaknesses && data.weaknesses.length > 0) {
-            markdownText = "**Weaknesses:**\n" + data.weaknesses.join(', ') + `\n\n**Analysis:**\n${data.analysis}\n\n**Priority:**\n${data.priority ? data.priority.join(', ') : ''}\n\n**Practice Plan:**\n${data.practice_plan ? data.practice_plan.join('\n') : ''}`;
+            markdownText = "**Weaknesses:**\n" + data.weaknesses.join(', ') + `\n\n**Analysis:**\n${data.analysis}\n\n**Practice Plan:**\n${data.practice_plan ? data.practice_plan.join('\n') : ''}`;
         } else {
             markdownText = "Great job! We haven't identified any major weak concepts right now.";
         }
     } else if (actionType === 'recommendation') {
-        markdownText = `**Recommended Lesson:** ${data.recommended_lesson ? data.recommended_lesson.title : 'None'}\n\n**Why?** ${data.reason}\n\n*Prerequisites:* ${data.prerequisite_concepts ? data.prerequisite_concepts.join(', ') : 'None'}\n*Estimated Focus:* ${data.estimated_focus}`;
+        markdownText = `**Recommended Lesson:** ${data.recommended_lesson ? data.recommended_lesson.title : 'None'}\n\n**Reason:** ${data.reason}`;
     } else if (actionType === 'learning-plan') {
-        markdownText = `**Today:**\n${data.today ? data.today.map(i => '- ' + i).join('\n') : 'None'}\n\n**Practice:**\n${data.practice ? data.practice.map(i => '- ' + i).join('\n') : 'None'}\n\n**Revision:**\n${data.revision ? data.revision.map(i => '- ' + i).join('\n') : 'None'}\n\n**Next:**\n${data.next ? data.next.map(i => '- ' + i).join('\n') : 'None'}`;
-    } else if (actionType === 'code-review') {
-        markdownText = `**Score:** ${data.score}/100\n\n**Bugs:**\n${data.bugs ? data.bugs.map(i => `- ${i}`).join('\n') : 'None'}\n\n**Strengths:**\n${data.strengths ? data.strengths.map(h => `- ${h}`).join('\n') : 'None'}\n\n**Improvements:**\n${data.improvements ? data.improvements.map(i => `- ${i}`).join('\n') : 'None'}\n\n**Concepts to Review:** ${data.concepts_to_review ? data.concepts_to_review.join(', ') : 'None'}`;
-        if (data.corrected_code) {
-            markdownText += `\n\n**Corrected Code:**\n\`\`\`\n${data.corrected_code}\n\`\`\``;
-        }
+        markdownText = `**Today:**\n${data.today ? data.today.map(i => '- ' + i).join('\n') : 'None'}\n\n**Practice:**\n${data.practice ? data.practice.map(i => '- ' + i).join('\n') : 'None'}\n\n**Next:**\n${data.next ? data.next.map(i => '- ' + i).join('\n') : 'None'}`;
     }
 
-    // Render securely
-    const rawHtml = marked.parse(markdownText);
-    const cleanHtml = DOMPurify.sanitize(rawHtml);
+    const rawHtml = typeof marked !== 'undefined' ? marked.parse(markdownText) : markdownText;
+    const cleanHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
     
     let providerIndicator = "";
     if (data._provider_used) {
-        let providerText = data._provider_used === 'gemini' ? 'AI powered by Gemini' : 'AI fallback provider active';
-        providerIndicator = `<div style="text-align: right; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic;">${providerText}</div>`;
+        let providerText = data._provider_used === 'gemini' ? 'AI powered by Gemini' : 'AI powered by OpenRouter';
+        providerIndicator = `<div style="text-align: right; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic;">${providerText}</div>`;
     }
     
-    // Append instead of overwrite
-    const wrapper = document.createElement('div');
-    wrapper.style.marginBottom = '1.5rem';
-    wrapper.style.padding = '10px';
-    wrapper.style.background = 'rgba(0,0,0,0.4)';
-    wrapper.style.borderRadius = '8px';
-    wrapper.innerHTML = `<div class="markdown-body">${cleanHtml}</div>${providerIndicator}`;
-    container.appendChild(wrapper);
-    
+    bubble.classList.remove('loading-bubble');
+    bubble.innerHTML = `
+        <div class="bubble-sender" style="color: #00ff88;">LEARNX AI</div>
+        <div class="markdown-body" style="font-size: 14px; color: var(--text-primary);">${cleanHtml}</div>
+        ${providerIndicator}
+    `;
     scrollToBottom();
 }
 
-// Support hitting 'Enter' in custom question box
+function renderErrorIntoBubble(loadingId, errorMsg) {
+    const bubble = document.getElementById(loadingId);
+    if (!bubble) return;
+
+    const cleanMsg = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(errorMsg) : errorMsg;
+    bubble.classList.remove('loading-bubble');
+    bubble.innerHTML = `
+        <div class="bubble-sender" style="color: var(--color-danger);">LEARNX AI</div>
+        <div style="color: var(--color-danger); font-size: 14px;">${cleanMsg}</div>
+    `;
+    scrollToBottom();
+}
+
+// Auto-grow for custom question textarea
 document.addEventListener('DOMContentLoaded', () => {
     const inputField = document.getElementById('ai-custom-question');
     if (inputField) {
-        inputField.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('ai-ask-btn').click();
-            }
+        inputField.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
         });
     }
 });
@@ -240,26 +272,27 @@ document.addEventListener('DOMContentLoaded', () => {
 window.toggleAIPanel = function() {
     const panel = document.getElementById('ai-assistant-panel');
     const floatingBtn = document.getElementById('ai-floating-btn');
+    if (!panel) return;
     
     if (panel.classList.contains('minimized')) {
         panel.classList.remove('minimized');
-        if(floatingBtn) floatingBtn.style.display = 'none';
+        if (floatingBtn) floatingBtn.style.display = 'none';
         localStorage.setItem('learnx_ai_panel_state', 'expanded');
     } else {
         panel.classList.add('minimized');
-        if(floatingBtn) floatingBtn.style.display = 'flex';
+        if (floatingBtn) floatingBtn.style.display = 'flex';
         localStorage.setItem('learnx_ai_panel_state', 'minimized');
     }
-}
+};
 
 window.closeAIPanel = function() {
     const panel = document.getElementById('ai-assistant-panel');
     const floatingBtn = document.getElementById('ai-floating-btn');
     
-    if(panel) panel.style.display = 'none';
-    if(floatingBtn) floatingBtn.style.display = 'flex';
+    if (panel) panel.style.display = 'none';
+    if (floatingBtn) floatingBtn.style.display = 'flex';
     localStorage.setItem('learnx_ai_panel_state', 'closed');
-}
+};
 
 function initAIPanel() {
     const state = localStorage.getItem('learnx_ai_panel_state') || 'expanded';
@@ -271,17 +304,17 @@ function initAIPanel() {
     if (state === 'minimized') {
         panel.classList.add('minimized');
         panel.style.display = 'flex';
-        if(floatingBtn) floatingBtn.style.display = 'flex';
+        if (floatingBtn) floatingBtn.style.display = 'flex';
     } else if (state === 'closed') {
         panel.style.display = 'none';
-        if(floatingBtn) floatingBtn.style.display = 'flex';
+        if (floatingBtn) floatingBtn.style.display = 'flex';
     } else {
         panel.classList.remove('minimized');
         panel.style.display = 'flex';
-        if(floatingBtn) floatingBtn.style.display = 'none';
+        if (floatingBtn) floatingBtn.style.display = 'none';
     }
     
-    if(floatingBtn) {
+    if (floatingBtn) {
         floatingBtn.addEventListener('click', () => {
             panel.style.display = 'flex';
             panel.classList.remove('minimized');

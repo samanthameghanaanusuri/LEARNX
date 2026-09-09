@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            await LEARNX_API.logout();
-            window.location.href = '/auth.html';
+            if (confirm("Are you sure you want to logout?")) {
+                await LEARNX_API.logout();
+                window.location.href = '/auth.html';
+            }
         });
     }
 
@@ -57,7 +59,7 @@ async function loadDashboard() {
                         ${Math.round(c.progress)}%
                     </div>
                     <div style="margin-left: 1.5rem;">
-                        <a href="/course.html?id=${c.id}" class="btn btn-secondary">Resume</a>
+                        <button onclick="resumeCourseFromDashboard(${c.id}, this)" class="btn btn-secondary" style="border: 1px solid var(--border-color); background: transparent; padding: 0.5rem 1rem; border-radius: 4px; color: var(--text-primary); cursor: pointer; transition: all 0.2s ease;">Resume</button>
                     </div>
                 </div>
             `).join('');
@@ -146,4 +148,22 @@ function formatMinutes(minutes) {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return `${h}h ${m}m`;
+}
+
+window.resumeCourseFromDashboard = async function(courseId, btnElement) {
+    if (btnElement) {
+        btnElement.disabled = true;
+        btnElement.textContent = 'Resuming...';
+    }
+    try {
+        const progress = await LEARNX_API.getCourseProgress(courseId);
+        if (progress && progress.next_lesson && progress.next_lesson.id) {
+            window.location.href = `/lesson.html?id=${progress.next_lesson.id}`;
+            return;
+        }
+    } catch (e) {
+        console.error("Failed to fetch progress to resume course:", e);
+    }
+    // Fallback
+    window.location.href = `/course.html?id=${courseId}`;
 }

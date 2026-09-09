@@ -441,8 +441,10 @@ class LessonProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete='CASCADE'), nullable=False)
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete='CASCADE'), nullable=False)
-    status = db.Column(db.String(50), default='not_started', nullable=False) # not_started, in_progress, completed
+    status = db.Column(db.String(50), default='not_started') # not_started, in_progress, completed
+    quiz_score = db.Column(db.Float, nullable=True)
     completion_percentage = db.Column(db.Float, default=0.0)
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
@@ -451,7 +453,9 @@ class LessonProgress(db.Model):
             'student_id': self.student_id,
             'lesson_id': self.lesson_id,
             'status': self.status,
+            'quiz_score': self.quiz_score,
             'completion_percentage': self.completion_percentage,
+            'started_at': self.started_at.isoformat() if self.started_at else None,
             'completed_at': self.completed_at.isoformat() if self.completed_at else None
         }
 

@@ -75,8 +75,8 @@ def verify_courses():
 
         # Ensure Python and Java are intact
         python_course = Course.query.filter_by(slug='python-programming').first()
-        if python_course and CourseModule.query.filter_by(course_id=python_course.id).count() == 30:
-            print("[OK] Python course exists with 30 modules")
+        if python_course and CourseModule.query.filter_by(course_id=python_course.id).count() == 15:
+            print("[OK] Python course exists with 15 modules")
         else:
             print("[FAIL] Python course is missing or damaged")
             all_passed = False

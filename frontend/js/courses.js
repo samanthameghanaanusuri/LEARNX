@@ -146,7 +146,7 @@ function renderCourses(courses) {
 
         const card = document.createElement('div');
         card.className = 'course-card';
-        card.style.background = grad;
+        card.style.background = `${grad}, #0b1120`;
 
         // Clean difficulty badge class
         const diffClass = course.difficulty.split(' ')[0].toLowerCase();
@@ -232,11 +232,27 @@ function filterCourses() {
     renderCourses(filtered);
 }
 
-function viewCourse(courseId) {
+async function viewCourse(courseId) {
     if (!courseId || isNaN(courseId)) {
         console.error("Navigation Error: Invalid course ID passed to viewCourse", courseId);
         alert("Unable to open course: Invalid course ID.");
         return;
     }
+    
+    // Find the course in allCourses
+    const course = allCourses.find(c => c.id == courseId);
+    if (course && course.is_enrolled) {
+        // Fetch progress details to get next lesson id
+        try {
+            const progress = await LEARNX_API.getCourseProgress(courseId);
+            if (progress && progress.next_lesson && progress.next_lesson.id) {
+                window.location.href = `/lesson.html?id=${progress.next_lesson.id}`;
+                return;
+            }
+        } catch (e) {
+            console.error("Failed to fetch progress to resume course:", e);
+        }
+    }
+    
     window.location.href = `/course.html?id=${courseId}`;
 }

@@ -89,10 +89,20 @@ function renderModules(isEnrolled) {
             
             let statusIcon = '○';
             let statusClass = 'status-not_started';
+            let isLocked = false;
             
-            if (isEnrolled && progressData.lesson_statuses[lesson.id] === 'completed') {
-                statusIcon = '✓';
-                statusClass = 'status-completed';
+            if (isEnrolled) {
+                if (progressData.lesson_statuses[lesson.id] === 'completed') {
+                    statusIcon = '✓';
+                    statusClass = 'status-completed';
+                } else if (progressData.locked_lessons && progressData.locked_lessons.includes(lesson.id)) {
+                    statusIcon = '🔒';
+                    statusClass = 'status-locked';
+                    isLocked = true;
+                } else if (progressData.next_lesson && progressData.next_lesson.id === lesson.id) {
+                    statusIcon = '🔓';
+                    statusClass = 'status-unlocked';
+                }
             }
 
             lItem.innerHTML = `
@@ -100,10 +110,14 @@ function renderModules(isEnrolled) {
                 <span class="status-icon ${statusClass}">${statusIcon}</span>
             `;
             
-            if (isEnrolled) {
+            if (isEnrolled && !isLocked) {
                 lItem.addEventListener('click', () => {
                     window.location.href = `/lesson.html?id=${lesson.id}`;
                 });
+            } else if (isEnrolled && isLocked) {
+                lItem.style.opacity = '0.6';
+                lItem.title = 'Complete previous modules to unlock';
+                lItem.style.cursor = 'not-allowed';
             } else {
                 lItem.style.opacity = '0.5';
                 lItem.title = 'Enroll to access';

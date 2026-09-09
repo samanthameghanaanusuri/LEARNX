@@ -14,22 +14,18 @@
             <span class="nav-logo">⚡</span> LEARNX
         </div>
         <div class="nav-links">
-            <a href="/courses.html">Catalog</a>
             <a href="/dashboard.html" class="active">Dashboard</a>
             <a href="/subject.html">Subjects</a>
             <a href="/progress.html">Progress</a>
-            <div class="dropdown">
-                <span style="color: var(--text-secondary); cursor: pointer;" id="navbar-username">Student ▼</span>
-                <div class="dropdown-content">
-                    <a href="#" id="logout-btn">Log Out</a>
-                </div>
-            </div>
         </div>
     </nav>
 
     <div class="dashboard-container">
         <!-- Main Column -->
         <div>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                <button id="logout-btn" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Logout</button>
+            </div>
             <div class="glass-panel" style="margin-bottom: 2rem;">
                 <h1 style="margin-top: 0;" id="welcome-message">Welcome back!</h1>
                 <p style="color: var(--text-secondary); margin-bottom: 0;">Continue your learning journey.</p>

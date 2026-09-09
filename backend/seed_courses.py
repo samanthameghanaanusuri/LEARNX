@@ -4,7 +4,7 @@ from app import create_app
 from app.models import (
     db, Course, CourseModule, Lesson, LessonExample, 
     Exercise, QuizQuestion, Concept, Subject, TestCase,
-    MiniProject, ProjectTestCase
+    MiniProject, ProjectTestCase, LessonProgress
 )
 from course_data_1 import COURSE_MODULES_1_TO_15
 from course_data_2 import COURSE_MODULES_16_TO_30
@@ -246,22 +246,262 @@ def seed_course_data(course_slug, course_title, course_description, subject_code
     
     db.session.commit()
 
+from python_course_rebuild import PYTHON_REBUILD_MODULES
+
+def seed_python_course_rebuild(course_slug, course_title, course_description, subject_code, subject_name, subject_desc, modules_data):
+    # 1. Find or create Course
+    course = Course.query.filter_by(slug=course_slug).first()
+    if not course:
+        print(f"Creating Course: {course_title}...")
+        course = Course(
+            title=course_title,
+            slug=course_slug,
+            description=course_description,
+            category="Programming",
+            difficulty="Beginner to Advanced",
+            is_published=True
+        )
+        db.session.add(course)
+        db.session.commit()
+    else:
+        print(f"Course {course_title} already exists. Updating attributes...")
+        course.title = course_title
+        course.description = course_description
+        db.session.commit()
+
+    # 2. Find or create Subject
+    subject = Subject.query.filter_by(code=subject_code).first()
+    if not subject:
+        print(f"Creating Subject: {subject_name} ({subject_code})...")
+        subject = Subject(
+            name=subject_name,
+            code=subject_code,
+            description=subject_desc
+        )
+        db.session.add(subject)
+        db.session.commit()
+
+    # 3. Clean up existing Python course modules & lessons & concepts safely
+    # Clear concept prerequisites relationship first for Python subject to prevent FK errors
+    for concept in subject.concepts:
+        concept.prerequisites.clear()
+    db.session.commit()
+
+    # Explicitly delete all child records of the Python course to avoid orphan records in SQLite
+    modules = CourseModule.query.filter_by(course_id=course.id).all()
+    for module in modules:
+        for lesson in module.lessons:
+            # Delete examples
+            LessonExample.query.filter_by(lesson_id=lesson.id).delete()
+            
+            # Delete exercises and their test cases
+            for ex in lesson.exercises:
+                TestCase.query.filter_by(exercise_id=ex.id).delete()
+            Exercise.query.filter_by(lesson_id=lesson.id).delete()
+            
+            # Delete quizzes
+            QuizQuestion.query.filter_by(lesson_id=lesson.id).delete()
+            
+            # Delete mini projects and their test cases
+            for proj in lesson.mini_projects:
+                ProjectTestCase.query.filter_by(project_id=proj.id).delete()
+            MiniProject.query.filter_by(lesson_id=lesson.id).delete()
+            
+            # Delete progress records
+            LessonProgress.query.filter_by(lesson_id=lesson.id).delete()
+            
+            # Delete the lesson
+            db.session.delete(lesson)
+        db.session.delete(module)
+    db.session.commit()
+
+    # Delete Python concepts
+    Concept.query.filter_by(subject_id=subject.id).delete()
+    db.session.commit()
+
+    prev_concept = None
+
+    for mod_idx, mod_data in enumerate(modules_data):
+        # Create CourseModule
+        module = CourseModule(
+            course_id=course.id,
+            title=mod_data['title'],
+            description=f"Learn everything about {mod_data['title']} in {subject_name}.",
+            order_index=mod_idx + 1
+        )
+        db.session.add(module)
+        db.session.commit()
+
+        # Create main Concept for the module
+        module_concept = Concept(
+            subject_id=subject.id,
+            name=mod_data['concept'],
+            description=f"Understanding {mod_data['title']}"
+        )
+        db.session.add(module_concept)
+        db.session.commit()
+
+        # Link module concept to previous module concept
+        if prev_concept:
+            if prev_concept not in module_concept.prerequisites:
+                module_concept.prerequisites.append(prev_concept)
+                db.session.commit()
+        prev_concept = module_concept
+
+        # Seed lessons
+        for les_idx, les_data in enumerate(mod_data['lessons']):
+            # Create lesson concept
+            lesson_concept = Concept(
+                subject_id=subject.id,
+                name=les_data['concept'],
+                description=f"Concept for {les_data['title']}"
+            )
+            db.session.add(lesson_concept)
+            db.session.commit()
+
+            # Link lesson concept to module concept as a prerequisite or sub-concept
+            if lesson_concept not in module_concept.depended_upon_by:
+                module_concept.depended_upon_by.append(lesson_concept)
+                db.session.commit()
+
+            lesson_title = les_data['title']
+            lesson_slug = f"{les_data['title'].lower().replace(' ', '-').replace('&', 'and').replace(',', '').replace('?', '').replace('(', '').replace(')', '')}-lesson-python"
+            
+            lesson_content = (
+                f"<h3>{lesson_title}</h3><p>{les_data['theory']}</p>"
+            )
+            if les_data.get('mistakes'):
+                lesson_content += (
+                    f"<h4>Common Mistakes</h4><ul>" + 
+                    "".join([f"<li>{m}</li>" for m in les_data['mistakes']]) + "</ul>"
+                )
+
+            lesson = Lesson(
+                module_id=module.id,
+                concept_id=lesson_concept.id,
+                title=lesson_title,
+                slug=lesson_slug,
+                content=lesson_content,
+                order_index=les_idx + 1,
+                estimated_minutes=20
+            )
+            db.session.add(lesson)
+            db.session.commit()
+
+            # Seed Examples
+            for ex_idx, ex in enumerate(les_data.get('examples', [])):
+                example = LessonExample(
+                    lesson_id=lesson.id,
+                    title=ex['title'],
+                    explanation=ex['explanation'],
+                    code=ex['code'],
+                    language='python',
+                    order_index=ex_idx + 1
+                )
+                db.session.add(example)
+
+            # Seed Exercises & Test Cases
+            for ex_idx, ex_data in enumerate(les_data.get('exercises', [])):
+                exercise = Exercise(
+                    lesson_id=lesson.id,
+                    concept_id=lesson_concept.id,
+                    title=ex_data['title'],
+                    description=ex_data['desc'],
+                    difficulty=ex_data.get('difficulty', 'Medium'),
+                    starter_code=ex_data['starter'],
+                    expected_output=ex_data['expected'],
+                    language='python',
+                    order_index=ex_idx + 1
+                )
+                db.session.add(exercise)
+                db.session.flush()
+
+                # Recreate test cases
+                tc_list = ex_data.get('test_cases', [
+                    {'input': '', 'expected': ex_data['expected'], 'is_hidden': False},
+                    {'input': '', 'expected': ex_data['expected'], 'is_hidden': True}
+                ])
+                for tc_idx, tc_item in enumerate(tc_list):
+                    tc = TestCase(
+                        exercise_id=exercise.id,
+                        input_data=tc_item.get('input', ''),
+                        expected_output=tc_item['expected'],
+                        is_hidden=tc_item.get('is_hidden', False),
+                        order_index=tc_idx + 1
+                    )
+                    db.session.add(tc)
+
+            # Seed Quizzes
+            for q_data in les_data.get('quizzes', []):
+                quiz = QuizQuestion(
+                    lesson_id=lesson.id,
+                    concept_id=lesson_concept.id,
+                    question_text=q_data['question'],
+                    options=q_data['options'],
+                    correct_answer=q_data['correct'],
+                    explanation=q_data['explanation'],
+                    difficulty=q_data['difficulty']
+                )
+                db.session.add(quiz)
+            
+            db.session.commit()
+
+        # Seed Module project if present
+        if 'project' in mod_data:
+            p_data = mod_data['project']
+            project = MiniProject(
+                lesson_id=lesson.id,
+                concept_id=lesson_concept.id,
+                title=p_data['title'],
+                objective=p_data['objective'],
+                scenario=p_data['scenario'],
+                requirements_json=json.dumps(p_data.get('requirements', [])),
+                features_json=json.dumps(p_data.get('features', [])),
+                required_concepts=p_data.get('required_concepts', ''),
+                architecture=p_data.get('architecture', ''),
+                guidance_json=json.dumps(p_data.get('guidance', [])),
+                hints_json=json.dumps(p_data.get('hints', [])),
+                workflow=p_data.get('workflow', ''),
+                expected_behavior=p_data['expected_behavior'],
+                evaluation_criteria=p_data['evaluation_criteria'],
+                starter_code=p_data.get('starter', ''),
+                language='python',
+                order_index=1
+            )
+            db.session.add(project)
+            db.session.flush()
+
+            # Seed project test cases
+            for ptc_idx, ptc_item in enumerate(p_data.get('test_cases', [])):
+                ptc = ProjectTestCase(
+                    project_id=project.id,
+                    input_data=ptc_item.get('input', ''),
+                    expected_output=ptc_item['expected'],
+                    description=ptc_item.get('description', f'Test {ptc_idx+1}'),
+                    is_hidden=ptc_item.get('is_hidden', False),
+                    order_index=ptc_idx + 1
+                )
+                db.session.add(ptc)
+            db.session.commit()
+
+        print(f"Seeded module {mod_idx+1}/{len(modules_data)} for {course_title}: {mod_data['title']}")
+
+    db.session.commit()
+
 def seed_courses():
     with app.app_context():
         # Ensure database tables exist
         db.create_all()
 
-        # 1. Seed Python Course
-        python_modules = COURSE_MODULES_1_TO_15 + COURSE_MODULES_16_TO_30
-        seed_course_data(
+        # 1. Seed Python Course (Rebuilt)
+        seed_python_course_rebuild(
             course_slug="python-programming",
             course_title="Python Programming — Beginner to Advanced",
             course_description="Master Python from the basics to advanced concepts like OOP, Decorators, and Algorithms. Includes quizzes, exercises, and knowledge tracing.",
             subject_code="PYTHON",
             subject_name="Python Language",
             subject_desc="Python programming concepts",
-            modules_data=python_modules,
-            lang_key="python"
+            modules_data=PYTHON_REBUILD_MODULES
         )
 
         # 2. Seed Java Course
@@ -281,3 +521,4 @@ def seed_courses():
 
 if __name__ == '__main__':
     seed_courses()
+

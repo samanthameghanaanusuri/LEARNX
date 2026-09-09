@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadLesson() {
     try {
         lessonData = await LEARNX_API.getLesson(lessonId);
+        if (lessonData.quiz_score !== undefined && lessonData.quiz_score !== null) {
+            quizResults = { score: lessonData.quiz_score };
+        }
         renderHeaderAndSidebar();
         renderTheory();
         setupPracticeLab();
@@ -31,39 +34,108 @@ async function loadLesson() {
         setupMasterySection();
         updateIntelligenceSidebar();
     } catch (error) {
-        document.getElementById('header-lesson-title').textContent = 'Error Loading Lesson';
-        document.getElementById('lesson-sidebar-nav').innerHTML = `<h4>Lesson Outline</h4><p style="color: var(--color-danger);">Failed to load.</p>`;
-        document.getElementById('intelligence-status').textContent = 'Error';
-        document.getElementById('intelligence-status').style.color = 'var(--color-danger)';
-        
-        document.getElementById('theory-content').innerHTML = `
-            <div class="glass-panel" style="border-left: 4px solid var(--color-danger);">
-                <h2 style="color: var(--color-danger); margin-top: 0;">Unable to load this lesson.</h2>
-                <p>Reason: ${error.message}</p>
-                <button class="btn btn-secondary" onclick="window.location.reload()" style="margin-top: 1rem;">Retry</button>
-            </div>
-        `;
+        if (error.message.includes('unlock') || error.message.includes('locked')) {
+            document.getElementById('header-lesson-title').textContent = 'Module Locked';
+            const nav = document.getElementById('lesson-sidebar-nav');
+            if (nav) nav.style.display = 'none';
+            document.getElementById('intelligence-status').textContent = 'Locked';
+            
+            document.getElementById('theory-content').innerHTML = `
+                <div class="glass-panel" style="border-left: 4px solid var(--color-warning); text-align: center; padding: 3rem; max-width: 600px; margin: 4rem auto;">
+                    <h2 style="color: var(--color-warning); margin-bottom: 1rem;">🔒 Module Locked</h2>
+                    <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem;">${error.message}</p>
+                    <a href="/courses.html" class="btn btn-primary">Back to Course Outline</a>
+                </div>
+            `;
+            // Hide other sections
+            document.getElementById('practice-lab-container').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('mini-project-container').style.display = 'none';
+            document.getElementById('mastery-container').style.display = 'none';
+        } else {
+            document.getElementById('header-lesson-title').textContent = 'Error Loading Lesson';
+            const nav = document.getElementById('lesson-sidebar-nav');
+            if (nav) nav.innerHTML = `<h4>Lesson Outline</h4><p style="color: var(--color-danger);">Failed to load.</p>`;
+            document.getElementById('intelligence-status').textContent = 'Error';
+            document.getElementById('intelligence-status').style.color = 'var(--color-danger)';
+            
+            document.getElementById('theory-content').innerHTML = `
+                <div class="glass-panel" style="border-left: 4px solid var(--color-danger);">
+                    <h2 style="color: var(--color-danger); margin-top: 0;">Unable to load this lesson.</h2>
+                    <p>Reason: ${error.message}</p>
+                    <button class="btn btn-secondary" onclick="window.location.reload()" style="margin-top: 1rem;">Retry</button>
+                </div>
+            `;
+        }
     }
 }
 
 function renderHeaderAndSidebar() {
+    if (lessonData.module && lessonData.module.course) {
+        const headerCourse = document.getElementById('header-course-title');
+        if (headerCourse) headerCourse.textContent = lessonData.module.course.title.toUpperCase();
+    }
     document.getElementById('header-lesson-title').textContent = lessonData.title;
     document.getElementById('header-progress-fill').style.width = '20%';
     
     const nav = document.getElementById('lesson-sidebar-nav');
-    nav.innerHTML = `<h4>Lesson Outline</h4><ul class="lesson-nav-list">
-        <li class="active" onclick="scrollToSection('theory-content')">1. Theory & Examples</li>
-        <li class="${lessonData.exercises && lessonData.exercises.length > 0 ? '' : 'disabled'}" onclick="scrollToSection('practice-lab-container')">2. Practice Lab (${lessonData.exercises ? lessonData.exercises.length : 0})</li>
-        <li class="${lessonData.quizzes && lessonData.quizzes.length > 0 ? '' : 'disabled'}" onclick="scrollToSection('quiz-container')">3. Knowledge Check (${lessonData.quizzes ? lessonData.quizzes.length : 0})</li>
-        <li class="${lessonData.projects && lessonData.projects.length > 0 ? '' : 'disabled'}" onclick="scrollToSection('project-container')">4. Mini Project</li>
-        <li onclick="scrollToSection('mastery-container')">5. Mastery & Progress</li>
-    </ul>`;
+    if (nav) {
+        const hasProjects = lessonData.projects && lessonData.projects.length > 0;
+        nav.innerHTML = `
+            <div class="drawer-header">
+                <h4 style="margin: 0; color: #fff; font-size: 16px;">Lesson Outline</h4>
+                <button onclick="closeLessonOutline()" class="drawer-close-btn" aria-label="Close outline">&times;</button>
+            </div>
+            <ul class="lesson-nav-list" style="margin-top: 1rem;">
+                <li class="active" onclick="navigateToSection('theory-content')">1. Theory & Examples</li>
+                <li class="${lessonData.exercises && lessonData.exercises.length > 0 ? '' : 'disabled'}" onclick="navigateToSection('practice-lab-container')">2. Practice Lab (${lessonData.exercises ? lessonData.exercises.length : 0})</li>
+                <li class="${lessonData.quizzes && lessonData.quizzes.length > 0 ? '' : 'disabled'}" onclick="navigateToSection('quiz-container')">3. Knowledge Check (${lessonData.quizzes ? lessonData.quizzes.length : 0})</li>
+                ${hasProjects ? `<li onclick="navigateToSection('project-container')">4. Mini Project</li>` : ''}
+                <li onclick="navigateToSection('mastery-container')">${hasProjects ? '5' : '4'}. Mastery & Progress</li>
+            </ul>
+        `;
+    }
 }
 
-window.scrollToSection = function(sectionId) {
+window.toggleLessonOutline = function() {
+    const drawer = document.getElementById('lesson-sidebar-nav');
+    const overlay = document.getElementById('outline-drawer-overlay');
+    if (!drawer) return;
+    
+    if (drawer.classList.contains('open')) {
+        closeLessonOutline();
+    } else {
+        openLessonOutline();
+    }
+};
+
+window.openLessonOutline = function() {
+    const drawer = document.getElementById('lesson-sidebar-nav');
+    const overlay = document.getElementById('outline-drawer-overlay');
+    if (drawer) drawer.classList.add('open');
+    if (overlay) overlay.classList.add('active');
+};
+
+window.closeLessonOutline = function() {
+    const drawer = document.getElementById('lesson-sidebar-nav');
+    const overlay = document.getElementById('outline-drawer-overlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
+};
+
+window.navigateToSection = function(sectionId) {
     const el = document.getElementById(sectionId);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        const items = document.querySelectorAll('.lesson-nav-list li');
+        items.forEach(item => item.classList.remove('active'));
+        const activeItem = document.querySelector(`.lesson-nav-list li[onclick*="${sectionId}"]`);
+        if (activeItem) activeItem.classList.add('active');
+    }
+    closeLessonOutline();
+};
+
+window.scrollToSection = window.navigateToSection;
 
 function renderTheory() {
     const theoryCol = document.getElementById('theory-content');
@@ -255,8 +327,15 @@ window.prevQuizPage = function() {
 }
 
 window.nextQuizPage = function() {
-    currentQuizPage++;
-    renderQuizPage();
+    const total = lessonData.quizzes.length;
+    if (currentQuizPage === total - 1) {
+        const wrapper = document.getElementById('quiz-questions-wrapper');
+        wrapper.innerHTML = `<div class="glass-panel text-center"><p>Evaluating Quiz Responses...</p></div>`;
+        submitQuizBulk();
+    } else {
+        currentQuizPage++;
+        renderQuizPage();
+    }
 }
 
 async function submitQuizBulk() {
@@ -444,11 +523,32 @@ function renderMasterySummary() {
     const passedEx = Object.values(exerciseScores).filter(s => s === 1.0).length;
     const quizDone = quizResults !== null;
     const projectPassed = projectSubmission && projectSubmission.status === 'passed';
+    const hasProjects = lessonData.projects && lessonData.projects.length > 0;
     
-    const allReady = (totalEx === 0 || passedEx === totalEx) && (!lessonData.quizzes || quizDone) && (!lessonData.projects || projectPassed);
+    const allReady = (totalEx === 0 || passedEx === totalEx) && (!lessonData.quizzes || lessonData.quizzes.length === 0 || quizDone) && (!lessonData.projects || lessonData.projects.length === 0 || projectPassed);
+    
+    if (allReady && !lessonData.is_completed) {
+        lessonData.is_completed = true; // Optimistic update to prevent multiple calls
+        handleCompleteLesson(true);
+    }
+
+    let buttonHtml = '';
+    if (lessonData.is_completed) {
+        buttonHtml = `
+            <button class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 16px; background-color: var(--color-success); border-color: var(--color-success);" onclick="proceedToNextModuleFlow()">
+                ✓ Module Complete. Proceed to Next Module
+            </button>
+        `;
+    } else {
+        buttonHtml = `
+            <button class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 16px;" disabled>
+                🔒 Complete All Requirements to Unlock
+            </button>
+        `;
+    }
 
     panel.innerHTML = `
-        <h3 style="margin-top: 0; color: #fff;">Lesson Mastery Criteria</h3>
+        <h3 style="margin-top: 0; color: #fff;">Module Mastery & Progress</h3>
         <div style="margin: 1rem 0;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 14px;">
                 <span>1. Practice Exercises (${passedEx}/${totalEx})</span>
@@ -458,32 +558,88 @@ function renderMasterySummary() {
                 <span>2. Knowledge Check (MCQs)</span>
                 <span style="color: ${quizDone ? 'var(--color-success)' : 'var(--color-warning)'};">${quizDone ? `✓ Completed (${Math.round(quizResults.score * 100)}%)` : 'Pending'}</span>
             </div>
+            ${hasProjects ? `
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 14px;">
                 <span>3. Module Mini Project</span>
                 <span style="color: ${projectPassed ? 'var(--color-success)' : 'var(--color-warning)'};">${projectPassed ? '✓ Passed' : 'Pending'}</span>
             </div>
+            ` : ''}
         </div>
 
         <div style="margin-top: 2rem; text-align: center;">
-            <button class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 16px;" onclick="handleCompleteLesson()" ${allReady ? '' : 'disabled'}>
-                ${allReady ? '🎉 Mark Lesson Complete & Continue' : '🔒 Complete All Requirements to Unlock'}
-            </button>
+            ${buttonHtml}
         </div>
     `;
 }
 
-window.handleCompleteLesson = async function() {
-    try {
-        await LEARNX_API.completeLesson(lessonId);
-        alert('Congratulations! Lesson marked as completed.');
-        const nextId = parseInt(lessonId) + 1;
-        if (nextId <= 30) {
-            window.location.href = `/lesson.html?id=${nextId}`;
-        } else {
+window.proceedToNextModuleFlow = async function() {
+    let res = window.nextModuleResolution;
+    if (!res) {
+        const btn = document.querySelector('#mastery-container button');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Loading next module...';
+        }
+        try {
+            res = await LEARNX_API.completeLesson(lessonId);
+            window.nextModuleResolution = res;
+        } catch (err) {
+            console.error('Failed to get completion details:', err);
             window.location.href = '/courses.html';
+            return;
+        }
+    }
+    
+    if (res.course_completed) {
+        const panel = document.getElementById('mastery-container');
+        if (panel) {
+            panel.innerHTML = `
+                <div class="glass-panel text-center" style="border-left: 4px solid var(--color-success); padding: 3rem;">
+                    <h2 style="color: var(--color-success); margin-bottom: 1rem;">🎉 Course Completed!</h2>
+                    <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem;">You've successfully completed all modules in this course.</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <a href="/dashboard.html" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 16px;">Go to Dashboard</a>
+                        <a href="/courses.html" class="btn btn-secondary" style="padding: 0.75rem 2rem; font-size: 16px;">View Course Progress</a>
+                    </div>
+                </div>
+            `;
+        }
+        return;
+    }
+    
+    if (res.next_module_available && res.next_lesson_id) {
+        const panel = document.getElementById('mastery-container');
+        if (panel) {
+            panel.innerHTML = `
+                <div class="glass-panel text-center" style="border-left: 4px solid var(--color-success); padding: 2rem;">
+                    <h3 style="color: var(--color-success); margin-top: 0;">✓ Module Completed! 🎉</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Next: <strong>${res.next_module_title || 'Next Module'}</strong></p>
+                    <p style="font-size: 14px; color: var(--text-secondary); font-style: italic;">Starting the next module...</p>
+                </div>
+            `;
+        }
+        
+        setTimeout(() => {
+            window.location.href = `/lesson.html?id=${res.next_lesson_id}`;
+        }, 1500);
+    } else {
+        window.location.href = '/courses.html';
+    }
+}
+
+window.handleCompleteLesson = async function(isSilent = false) {
+    try {
+        const res = await LEARNX_API.completeLesson(lessonId);
+        lessonData.is_completed = true;
+        window.nextModuleResolution = res;
+        renderMasterySummary();
+        if (!isSilent) {
+            proceedToNextModuleFlow();
         }
     } catch (err) {
-        alert('Completion failed: ' + err.message);
+        lessonData.is_completed = false; // Revert optimistic update
+        renderMasterySummary();
+        if (!isSilent) alert('Completion failed: ' + err.message);
     }
 }
 

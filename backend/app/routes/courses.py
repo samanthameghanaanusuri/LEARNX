@@ -51,12 +51,45 @@ def get_course_modules(course_id):
 @courses_bp.route('/lessons/<int:lesson_id>', methods=['GET'])
 def get_lesson(lesson_id):
     lesson = Lesson.query.get_or_404(lesson_id)
+    student_id = get_auth_student()
+
+    if student_id:
+        course_id = lesson.module.course_id
+        modules = CourseModule.query.filter_by(course_id=course_id).order_by(CourseModule.order_index).all()
+        ordered_lesson_ids = []
+        for m in modules:
+            m_lessons = Lesson.query.filter_by(module_id=m.id).order_by(Lesson.order_index).all()
+            for ml in m_lessons:
+                ordered_lesson_ids.append(ml.id)
+
+        try:
+            req_idx = ordered_lesson_ids.index(lesson_id)
+            furthest_unlocked_idx = 0
+            for idx, l_id in enumerate(ordered_lesson_ids):
+                prog = LessonProgress.query.filter_by(student_id=student_id, lesson_id=l_id).first()
+                if not prog or prog.status != 'completed':
+                    furthest_unlocked_idx = idx
+                    break
+                else:
+                    furthest_unlocked_idx = idx + 1
+            
+            if req_idx > furthest_unlocked_idx:
+                return jsonify({'error': 'locked', 'message': 'Complete the previous module to unlock.'}), 403
+        except ValueError:
+            pass
+
     lesson_dict = lesson.to_dict()
     
+    if student_id:
+        prog = LessonProgress.query.filter_by(student_id=student_id, lesson_id=lesson_id).first()
+        if prog:
+            lesson_dict['is_completed'] = (prog.status == 'completed')
+            if prog.quiz_score is not None:
+                lesson_dict['quiz_score'] = prog.quiz_score
+
     examples = LessonExample.query.filter_by(lesson_id=lesson_id).order_by(LessonExample.order_index).all()
     lesson_dict['examples'] = [ex.to_dict() for ex in examples]
     
-    student_id = get_auth_student()
     exercises = Exercise.query.filter_by(lesson_id=lesson_id).order_by(Exercise.order_index).all()
     ex_list = []
     for ex in exercises:
@@ -130,22 +163,27 @@ def get_progress(course_id):
     enrollment.progress_percentage = percentage
     db.session.commit()
     
-    # Deterministic Next Lesson
+    # Deterministic Next Lesson and Locked Lessons
     next_lesson = None
+    locked_lessons = []
+    has_found_next = False
+    
     for m in sorted(modules, key=lambda x: x.order_index):
         for l in sorted([les for les in lessons if les.module_id == m.id], key=lambda x: x.order_index):
-            if lesson_statuses.get(l.id) != 'completed':
-                next_lesson = l.to_dict()
-                break
-        if next_lesson:
-            break
+            if not has_found_next:
+                if lesson_statuses.get(l.id) != 'completed':
+                    next_lesson = l.to_dict()
+                    has_found_next = True
+            else:
+                locked_lessons.append(l.id)
 
     return jsonify({
         'progress_percentage': percentage,
         'completed_lessons': completed,
         'total_lessons': total_lessons,
         'lesson_statuses': lesson_statuses,
-        'next_lesson': next_lesson
+        'next_lesson': next_lesson,
+        'locked_lessons': locked_lessons
     }), 200
 
 @courses_bp.route('/lessons/<int:lesson_id>/complete', methods=['POST'])
@@ -179,6 +217,17 @@ def complete_lesson(lesson_id):
                     'message': f"Please pass mini project: '{proj.title}' before marking lesson complete."
                 }), 400
 
+        # Verify quiz requirement
+        quizzes = QuizQuestion.query.filter_by(lesson_id=lesson_id).all()
+        if quizzes:
+            prog = LessonProgress.query.filter_by(student_id=student_id, lesson_id=lesson_id).first()
+            if not prog or prog.quiz_score is None:
+                return jsonify({
+                    'success': False,
+                    'error': 'Incomplete requirements',
+                    'message': "Please complete the Knowledge Check (MCQ) before marking lesson complete."
+                }), 400
+
         prog = LessonProgress.query.filter_by(student_id=student_id, lesson_id=lesson_id).first()
         if not prog:
             prog = LessonProgress(student_id=student_id, lesson_id=lesson_id)
@@ -189,7 +238,40 @@ def complete_lesson(lesson_id):
         prog.completed_at = datetime.utcnow()
         db.session.commit()
         
-        return jsonify({'message': 'Lesson marked as completed'}), 200
+        # Calculate next module/lesson
+        current_module = lesson.module
+        next_lesson_id = None
+        next_module_title = None
+        course_completed = False
+        
+        # Check if there is another lesson in the same module
+        next_lesson = Lesson.query.filter_by(module_id=current_module.id).filter(Lesson.order_index > lesson.order_index).order_by(Lesson.order_index.asc()).first()
+        
+        if next_lesson:
+            next_lesson_id = next_lesson.id
+            next_module_title = current_module.title
+        else:
+            # Check if there is a next module
+            next_module = CourseModule.query.filter_by(course_id=current_module.course_id).filter(CourseModule.order_index > current_module.order_index).order_by(CourseModule.order_index.asc()).first()
+            if next_module:
+                first_lesson = Lesson.query.filter_by(module_id=next_module.id).order_by(Lesson.order_index.asc()).first()
+                if first_lesson:
+                    next_lesson_id = first_lesson.id
+                    next_module_title = next_module.title
+                else:
+                    course_completed = True
+            else:
+                course_completed = True
+        
+        return jsonify({
+            'success': True,
+            'message': 'Lesson marked as completed',
+            'module_completed': next_lesson is None,
+            'next_module_available': next_lesson_id is not None,
+            'next_lesson_id': next_lesson_id,
+            'next_module_title': next_module_title,
+            'course_completed': course_completed
+        }), 200
     except Exception as e:
         db.session.rollback()
         import traceback
@@ -634,6 +716,12 @@ def submit_quiz_bulk(lesson_id):
             })
 
         score = correct_count / total_count if total_count > 0 else 0.0
+        
+        prog = LessonProgress.query.filter_by(student_id=student_id, lesson_id=lesson_id).first()
+        if not prog:
+            prog = LessonProgress(student_id=student_id, lesson_id=lesson_id, status='not_started')
+            db.session.add(prog)
+        prog.quiz_score = score
         
         # Single commit for all BKT updates in this bulk quiz
         db.session.commit()

@@ -44,90 +44,102 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Top Navbar Instead of Global Sidebar for Lesson Mode (Optional but cleaner) -->
+        <!-- Top Navbar with Lesson Outline Toggle Button -->
         <nav class="navbar flex-between" style="padding: 1rem 2rem; background: rgba(3, 7, 18, 0.95); border-bottom: 1px solid var(--border-card); position: sticky; top: 0; z-index: 100;">
-            <div class="logo">
-                <a href="/dashboard.html" style="color: var(--text-primary);"><h1>LEARN<span>X</span></h1></a>
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <button class="btn btn-secondary" id="outline-toggle-btn" onclick="toggleLessonOutline()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
+                    <span style="font-size: 16px;">☰</span> <span>Lesson Outline</span>
+                </button>
+                <div class="logo">
+                    <a href="/dashboard.html" style="color: var(--text-primary);"><h1>LEARN<span>X</span></h1></a>
+                </div>
             </div>
             <div>
                 <a href="/courses.html" class="btn btn-secondary">← Back to Courses</a>
             </div>
         </nav>
 
+        <!-- Collapsible Left Sidebar Drawer (CLOSED by default) -->
+        <div id="outline-drawer-overlay" class="outline-drawer-overlay" onclick="closeLessonOutline()"></div>
+        <aside class="lesson-outline-drawer" id="lesson-sidebar-nav">
+            <div class="drawer-header">
+                <h4 style="margin: 0; color: #fff; font-size: 16px;">Lesson Outline</h4>
+                <button onclick="closeLessonOutline()" class="drawer-close-btn" aria-label="Close outline">&times;</button>
+            </div>
+            <ul class="lesson-nav-list" style="margin-top: 1rem;">
+                <li class="active" onclick="navigateToSection('theory-content')">1. Theory & Examples</li>
+                <li onclick="navigateToSection('practice-lab-container')">2. Practice Lab</li>
+                <li onclick="navigateToSection('quiz-container')">3. Knowledge Check</li>
+                <li onclick="navigateToSection('project-container')">4. Mini Project</li>
+                <li onclick="navigateToSection('mastery-container')">5. Mastery & Progress</li>
+            </ul>
+        </aside>
+
+        <!-- Main Desktop Content Area -->
         <main class="main-content" style="padding: 0; margin: 0; width: 100%;">
-            <div class="lesson-layout">
+            <div class="lesson-main-wrapper">
                 
-                <!-- Left: Lesson Navigation -->
-                <aside class="lesson-sidebar glass-panel" id="lesson-sidebar-nav">
-                    <h4>Lesson Outline</h4>
-                    <ul class="lesson-nav-list">
-                        <li class="active">Loading...</li>
-                    </ul>
-                </aside>
-
-                <!-- Center: Sequential Learning Content -->
-                <div class="lesson-content">
-                    <div id="lesson-header" style="margin-bottom: 2rem;">
-                        <h5 style="color: var(--color-primary); margin-bottom: 0.25rem;">PYTHON PROGRAMMING</h5>
-                        <h1 id="header-lesson-title">Loading...</h1>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: 0%;" id="header-progress-fill"></div>
+                <!-- Lesson Header & Intelligence Summary Panel -->
+                <div id="lesson-header" class="glass-panel" style="margin-bottom: 2rem; padding: 1.5rem 2rem;">
+                    <div class="flex-between" style="align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+                        <div>
+                            <h5 style="color: var(--color-primary); margin-bottom: 0.25rem; font-size: 13px; letter-spacing: 0.05em;" id="header-course-title">PYTHON PROGRAMMING</h5>
+                            <h1 id="header-lesson-title" style="font-size: 28px; margin-bottom: 0.5rem;">Loading...</h1>
+                        </div>
+                        
+                        <!-- Learning Intelligence Card -->
+                        <div style="display: flex; gap: 1.5rem; background: rgba(0,0,0,0.3); padding: 0.75rem 1.25rem; border-radius: 10px; border: 1px solid var(--border-card);">
+                            <div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Concept Mastery</div>
+                                <strong style="color: var(--color-primary); font-size: 18px;" id="intelligence-mastery">--%</strong>
+                            </div>
+                            <div style="border-left: 1px solid var(--border-card); padding-left: 1.5rem;">
+                                <div style="font-size: 12px; color: var(--text-muted);">Status</div>
+                                <span style="color: var(--color-warning); font-weight: 600; font-size: 14px;" id="intelligence-status">In Progress</span>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- 1. LEARN -->
-                    <div id="theory-content">
-                        <div class="loading">Loading lesson theory...</div>
-                    </div>
-
-                    <!-- 2. PRACTICE LAB -->
-                    <div id="practice-lab-container" style="margin-top: 4rem; display: none;">
-                        <h2>Practice Lab</h2>
-                        <p>Apply what you've just learned in the interactive sandbox below.</p>
-                        <div class="glass-panel" id="editor-container" style="margin-top: 1rem;">
-                            <!-- Injected by CodeEditor -->
-                        </div>
-                    </div>
-
-                    <!-- 3. KNOWLEDGE CHECK -->
-                    <div id="quiz-container" style="margin-top: 3rem; display: none;">
-                        <h2>3. Knowledge Check</h2>
-                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Test your conceptual understanding with 10 targeted questions.</p>
-                        <div id="quiz-questions-wrapper"></div>
-                    </div>
-
-                    <!-- 4. MINI PROJECT -->
-                    <div id="project-container" style="margin-top: 3rem; display: none;">
-                        <h2>4. Module Mini Project</h2>
-                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Build a real-world project applying all concepts learned in this module.</p>
-                        <div id="project-wrapper"></div>
-                    </div>
-
-                    <!-- 5. MASTERY & PROGRESS -->
-                    <div id="mastery-container" style="margin-top: 3rem; display: none;">
-                        <h2>5. Module Mastery & Progress</h2>
-                        <div class="glass-panel" id="mastery-summary-panel" style="padding: 1.5rem; margin-top: 1rem;">
-                            <!-- Injected by lesson.js -->
-                        </div>
+                    
+                    <div class="progress-bar-container" style="margin-top: 1rem;">
+                        <div class="progress-bar-fill" style="width: 0%;" id="header-progress-fill"></div>
                     </div>
                 </div>
 
-                <!-- Right: Learning Intelligence -->
-                <aside class="lesson-sidebar glass-panel" id="lesson-intelligence">
-                    <h4>Learning Intelligence</h4>
-                    <div style="margin-top: 1rem;">
-                        <p style="font-size: 14px; margin-bottom: 0.5rem;">Concept Mastery:</p>
-                        <strong style="color: var(--color-primary); font-size: 22px;" id="intelligence-mastery">--%</strong>
+                <!-- 1. THEORY & EXAMPLES -->
+                <div id="theory-content">
+                    <div class="loading">Loading lesson theory...</div>
+                </div>
+
+                <!-- 2. PRACTICE LAB -->
+                <div id="practice-lab-container" style="margin-top: 4rem; display: none;">
+                    <h2>Practice Lab</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Apply what you've just learned in the interactive sandbox below.</p>
+                    <div class="glass-panel" id="editor-container">
+                        <!-- Injected by CodeEditor -->
                     </div>
-                    <div style="margin-top: 1.5rem;">
-                        <p style="font-size: 14px; margin-bottom: 0.5rem;">Lesson Status:</p>
-                        <span style="color: var(--color-warning); font-weight: 600;" id="intelligence-status">In Progress</span>
+                </div>
+
+                <!-- 3. KNOWLEDGE CHECK -->
+                <div id="quiz-container" style="margin-top: 3.5rem; display: none;">
+                    <h2>3. Knowledge Check</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Test your conceptual understanding with targeted questions.</p>
+                    <div id="quiz-questions-wrapper"></div>
+                </div>
+
+                <!-- 4. MINI PROJECT -->
+                <div id="project-container" style="margin-top: 3.5rem; display: none;">
+                    <h2>4. Module Mini Project</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Build a real-world project applying all concepts learned in this module.</p>
+                    <div id="project-wrapper"></div>
+                </div>
+
+                <!-- 5. MASTERY & PROGRESS -->
+                <div id="mastery-container" style="margin-top: 3.5rem; display: none;">
+                    <h2>5. Module Mastery & Progress</h2>
+                    <div class="glass-panel" id="mastery-summary-panel" style="padding: 1.5rem; margin-top: 1rem;">
+                        <!-- Injected by lesson.js -->
                     </div>
-                    <div style="margin-top: 1.5rem;" id="intelligence-requirements">
-                        <!-- Checklist injected by JS -->
-                    </div>
-                    <!-- AI Assistant is now a floating panel -->
-                </aside>
+                </div>
 
             </div>
         </main>
@@ -161,7 +173,7 @@
             </div>
             
             <div class="ai-input-row">
-                <input type="text" id="ai-custom-question" placeholder="Ask AI..." aria-label="Ask AI">
+                <textarea id="ai-custom-question" placeholder="Ask about this course..." aria-label="Ask about this course" style="resize: none; overflow-y: auto; min-height: 40px; max-height: 180px; width: 100%; border-radius: 6px; padding: 10px; font-family: inherit; font-size: inherit; border: 1px solid var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);"></textarea>
                 <button id="ai-ask-btn" class="btn btn-primary" onclick="requestAI('ask')" aria-label="Submit question">Ask</button>
             </div>
         </div>
