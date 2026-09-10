@@ -7,7 +7,7 @@ import os
 def create_app(config_class=Config):
     # Set up static folder pointing to the frontend directory relative to the runner
     # We want Flask to serve frontend static files directly
-    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../frontend'))
+    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend'))
     
     app = Flask(__name__, static_folder=frontend_dir, static_url_path='')
     app.config.from_object(config_class)
