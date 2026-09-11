@@ -13,6 +13,15 @@ last_diagnostic_error = {
     "status": 0
 }
 
+def sanitize_error_msg(msg: str) -> str:
+    if not msg:
+        return ""
+    # Strip potential API key pattern occurrences (e.g. AIzaSy..., sk-or-..., bearer tokens)
+    clean = re.sub(r'AIzaSy[A-Za-z0-9_-]{33}', '[REDACTED_GEMINI_KEY]', msg)
+    clean = re.sub(r'sk-or-v1-[A-Za-z0-9]{64}', '[REDACTED_OPENROUTER_KEY]', clean)
+    clean = re.sub(r'Bearer\s+[A-Za-z0-9._-]+', 'Bearer [REDACTED_TOKEN]', clean, flags=re.IGNORECASE)
+    return clean
+
 class ProviderManager:
     def __init__(self):
         self.primary = GeminiProvider()
@@ -34,30 +43,68 @@ Rules:
 """
 
     def extract_json(self, text: str):
-        try:
-            match = re.search(r'```(?:json)?\s*(.*?)\s*```', text, re.DOTALL)
-            if match:
-                return json.loads(match.group(1))
-            return json.loads(text)
-        except json.JSONDecodeError:
-            logger.error(f"Failed to parse JSON from AI response. Raw text: {text}")
+        if not text:
             return None
+        clean = text.strip()
+        match = re.search(r'```(?:json)?\s*(.*?)\s*```', clean, re.DOTALL)
+        if match:
+            clean = match.group(1).strip()
+            
+        try:
+            return json.loads(clean)
+        except json.JSONDecodeError:
+            pass
+
+        # Try replacing raw unescaped newlines in JSON string values
+        try:
+            sanitized = clean.replace('\r\n', '\n')
+            return json.loads(sanitized)
+        except Exception:
+            pass
+
+        # Extract "answer" field if present via regex
+        ans_match = re.search(r'"answer"\s*:\s*"(.*?)"\s*(?:,|\}\s*$)', clean, re.DOTALL)
+        if ans_match:
+            ans_text = ans_match.group(1).replace('\\n', '\n').replace('\\"', '"')
+            return {
+                "answer": ans_text,
+                "concepts": ["Course Context"],
+                "difficulty": "General",
+                "next_action": "Continue practicing"
+            }
+
+        # Fallback for plain text or incomplete JSON: wrap text as answer
+        if len(clean) > 10:
+            ans_clean = re.sub(r'^\s*\{\s*"answer"\s*:\s*"?', '', clean)
+            ans_clean = re.sub(r'"?\s*,\s*"concepts".*$', '', ans_clean, flags=re.DOTALL)
+            return {
+                "answer": ans_clean,
+                "concepts": ["Course Context"],
+                "difficulty": "General",
+                "next_action": "Continue practicing"
+            }
+
+        logger.error(f"Failed to parse JSON from AI response. Snippet: {sanitize_error_msg(clean[:150])}")
+        return None
 
     def is_transient_error(self, e: Exception) -> bool:
-        """Determines if the exception is a transient error (e.g. 429, 503) that warrants a fallback."""
+        """Determines if the exception is a transient error (e.g. 429, 502, 503, 504)."""
         if hasattr(e, 'code') and e.code in (429, 502, 503, 504):
             return True
-        if 'timeout' in str(e).lower() or 'connection' in str(e).lower():
+        msg = str(e).lower()
+        if 'timeout' in msg or 'connection' in msg or 'high demand' in msg or 'temporarily' in msg:
             return True
-        if 'status 429' in str(e).lower() or 'status 502' in str(e).lower() or 'status 503' in str(e).lower() or 'status 504' in str(e).lower():
+        if any(f'status {code}' in msg or f'code {code}' in msg or f'{code} unavailable' in msg for code in (429, 502, 503, 504)):
             return True
         return False
 
     def is_auth_error(self, e: Exception) -> bool:
-        if hasattr(e, 'code') and e.code in (401, 403):
-            return True
+        if hasattr(e, 'code') and e.code in (400, 401, 403):
+            msg = str(e).lower()
+            if "api key" in msg or "invalid_argument" in msg or "auth" in msg or "credential" in msg or "unauthorized" in msg or "forbidden" in msg:
+                return True
         msg = str(e).lower()
-        if "authentication" in msg or "auth" in msg or "credentials" in msg:
+        if "authentication" in msg or "api key" in msg or "auth" in msg or "credentials" in msg or "unauthorized" in msg:
             return True
         return False
 
@@ -101,69 +148,61 @@ Rules:
                         return {"success": False, "available": False, "error_type": "provider_error", "message": "Received malformed response from AI provider."}
                 return {"available": True, "success": True, "text": mock_resp}
         except self.MockAPIError as e:
-            # We let it fall through to the real error handling block
             primary_exception = e
         else:
             primary_exception = None
 
         system_instruction = self.get_system_instruction()
 
-        # Try Primary Provider
+        # Try Primary Provider (Gemini)
         if primary_exception is None:
             if not self.primary.is_configured():
                 primary_exception = RuntimeError("Primary AI provider (Gemini) is not configured.")
+                logger.info("AI_PROVIDER primary=gemini status=not_configured")
             else:
                 try:
-                    logger.info("AI_PROVIDER primary=gemini status=attempt")
-                    raw_response = self.primary.generate(prompt, system_instruction)
-                    logger.info("AI_PROVIDER primary=gemini status=success")
-                    return self._process_success_response(raw_response, is_json, self.primary.get_model_name(), self.primary.get_provider_name())
+                    logger.info(f"AI_PROVIDER primary={self.primary.get_provider_name()} status=attempt model={self.primary.get_model_name()}")
+                    raw_response = self.primary.generate(prompt, system_instruction=system_instruction, is_json=is_json)
+                    processed = self._process_success_response(raw_response, is_json, self.primary.get_model_name(), self.primary.get_provider_name())
+                    if processed.get("success"):
+                        logger.info(f"AI_PROVIDER primary={self.primary.get_provider_name()} status=success model={self.primary.get_model_name()}")
+                        return processed
+                    else:
+                        logger.warning(f"AI_PROVIDER primary={self.primary.get_provider_name()} returned unparseable JSON, attempting fallback")
+                        primary_exception = RuntimeError("Primary provider returned malformed JSON")
                 except Exception as e:
                     primary_exception = e
 
-        status_code = getattr(primary_exception, 'code', getattr(primary_exception, 'status_code', 'unknown'))
-        msg = str(primary_exception)
-        logger.error(f"AI_DEBUG_PROVIDER_ERROR status={status_code} exception={type(primary_exception).__name__} message={msg} model={self.primary.get_model_name()}")
+        status_code = getattr(primary_exception, 'code', getattr(primary_exception, 'status_code', 0))
+        safe_msg = sanitize_error_msg(str(primary_exception))
+        logger.error(f"AI_DEBUG_PROVIDER_ERROR provider={self.primary.get_provider_name()} status={status_code} exception={type(primary_exception).__name__} message={safe_msg} model={self.primary.get_model_name()}")
         
         last_diagnostic_error["status"] = status_code if isinstance(status_code, int) else 0
 
-        # Try Fallback Provider if error is transient, or if Gemini has auth/config error
-        if self.is_transient_error(primary_exception) or self.is_auth_error(primary_exception) or (isinstance(primary_exception, self.MockAPIError) and primary_exception.code in (429, 503)) or not self.primary.is_configured():
-            if hasattr(primary_exception, 'code'):
-                logger.info(f"AI_PROVIDER primary=gemini status={getattr(primary_exception, 'code', 'error')} - Triggering fallback")
-            else:
-                logger.info("AI_PROVIDER primary=gemini status=error - Triggering fallback")            
-            if self.fallback.is_configured():
-                try:
-                    logger.info("AI_PROVIDER fallback=openrouter status=attempt")
-                    raw_response = self.fallback.generate(prompt, system_instruction)
-                    logger.info("AI_PROVIDER fallback=openrouter status=success")
-                    return self._process_success_response(raw_response, is_json, self.fallback.get_model_name(), self.fallback.get_provider_name())
-                except Exception as e:
-                    logger.error(f"AI_PROVIDER fallback=openrouter status=failure error={e}")
-                    last_diagnostic_error["type"] = "all_providers_unavailable"
-                    return {
-                        "success": False,
-                        "available": False,
-                        "error_type": "all_providers_unavailable",
-                        "message": "AI providers are temporarily unavailable. Your learning progress is safe."
-                    }
-            else:
-                logger.info("AI_PROVIDER fallback=openrouter status=not_configured")
-        
+        # Try Fallback Provider (OpenRouter) if configured
+        if self.fallback.is_configured():
+            logger.info("AI_PROVIDER triggering fallback=openrouter")
+            try:
+                raw_response = self.fallback.generate(prompt, system_instruction=system_instruction, is_json=is_json)
+                processed = self._process_success_response(raw_response, is_json, self.fallback.get_model_name(), self.fallback.get_provider_name())
+                if processed.get("success"):
+                    logger.info(f"AI_PROVIDER fallback={self.fallback.get_provider_name()} status=success model={self.fallback.get_model_name()}")
+                    return processed
+            except Exception as fb_err:
+                fb_status = getattr(fb_err, 'code', getattr(fb_err, 'status_code', 0))
+                fb_msg = sanitize_error_msg(str(fb_err))
+                logger.error(f"AI_DEBUG_PROVIDER_ERROR provider={self.fallback.get_provider_name()} status={fb_status} exception={type(fb_err).__name__} message={fb_msg} model={self.fallback.get_model_name()}")
+        else:
+            logger.info("AI_PROVIDER fallback=openrouter status=not_configured")
+
+        # Determine error taxonomy for status reporting
         error_type = "provider_error"
         user_message = "AI provider error occurred. Please try again later."
-        
-        if self.is_transient_error(primary_exception) or (isinstance(primary_exception, self.MockAPIError) and primary_exception.code in (429, 503)):
-             last_diagnostic_error["type"] = "all_providers_unavailable"
-             return {
-                 "success": False,
-                 "available": False,
-                 "error_type": "all_providers_unavailable",
-                 "message": "AI providers are temporarily unavailable. Your learning progress is safe."
-             }
-             
-        if self.is_auth_error(primary_exception):
+
+        if self.is_transient_error(primary_exception):
+            error_type = "all_providers_unavailable"
+            user_message = "AI providers are temporarily unavailable. Your learning progress is safe."
+        elif self.is_auth_error(primary_exception):
             error_type = "authentication_error"
             user_message = "AI authentication failed. Please check the API configuration."
         elif status_code == 400:
@@ -182,8 +221,9 @@ Rules:
     def _process_success_response(self, raw_text: str, is_json: bool, model_name: str, provider_name: str):
         if is_json:
             res_json = self.extract_json(raw_text)
-            if res_json is None:
-                logger.error(f"AI_DEBUG_PROVIDER_ERROR status=200 exception=MalformedJSON message=AI returned malformed JSON: {raw_text} model={model_name}")
+            if res_json is None or not isinstance(res_json, dict):
+                safe_text = sanitize_error_msg(raw_text[:150])
+                logger.error(f"AI_DEBUG_PROVIDER_ERROR status=200 exception=MalformedJSON message=AI returned malformed JSON: {safe_text} model={model_name}")
                 return {"success": False, "available": False, "error_type": "provider_error", "message": "Received malformed response from AI provider."}
             res_json["available"] = True
             res_json["success"] = True

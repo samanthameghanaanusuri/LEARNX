@@ -27,5 +27,6 @@ class Config:
         'p_slip': 0.10
     }
 
-    AI_API_KEY = os.environ.get('AI_API_KEY')
-    AI_MODEL = os.environ.get('AI_MODEL') or 'gemini-3.7-flash'
+    AI_API_KEY = os.environ.get('AI_API_KEY') or os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY')
+    AI_MODEL = os.environ.get('AI_MODEL') or 'gemini-2.5-flash'
+

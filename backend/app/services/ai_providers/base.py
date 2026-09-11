@@ -6,7 +6,7 @@ class BaseAIProvider(ABC):
     """
     
     @abstractmethod
-    def generate(self, prompt: str, system_instruction: str = None) -> str:
+    def generate(self, prompt: str, system_instruction: str = None, is_json: bool = True) -> str:
         """
         Generate content based on a prompt.
         

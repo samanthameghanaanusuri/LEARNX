@@ -14,7 +14,7 @@ class OpenRouterProvider(BaseAIProvider):
     def is_configured(self) -> bool:
         return bool(self.api_key)
 
-    def generate(self, prompt: str, system_instruction: str = None) -> str:
+    def generate(self, prompt: str, system_instruction: str = None, is_json: bool = True) -> str:
         if not self.api_key:
             raise RuntimeError("OpenRouter AI is not configured (missing OPENROUTER_API_KEY).")
 
@@ -27,7 +27,12 @@ class OpenRouterProvider(BaseAIProvider):
 
         messages = []
         if system_instruction:
-            messages.append({"role": "system", "content": system_instruction})
+            sys_text = system_instruction
+            if is_json and "json" not in sys_text.lower():
+                sys_text += "\nRespond strictly in valid JSON format."
+            messages.append({"role": "system", "content": sys_text})
+        elif is_json:
+            messages.append({"role": "system", "content": "Respond strictly in valid JSON format."})
             
         messages.append({"role": "user", "content": prompt})
 

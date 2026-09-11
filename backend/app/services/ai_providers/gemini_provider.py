@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class GeminiProvider(BaseAIProvider):
     def __init__(self):
-        self.api_key = os.environ.get('AI_API_KEY')
-        self.model = os.environ.get('AI_MODEL', 'gemini-3.6-flash')
+        self.api_key = os.environ.get('AI_API_KEY') or os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY')
+        self.model = os.environ.get('AI_MODEL') or 'gemini-2.5-flash'
         self.client = None
         
         if self.api_key:
@@ -22,13 +22,15 @@ class GeminiProvider(BaseAIProvider):
     def is_configured(self) -> bool:
         return bool(self.api_key) and self.client is not None
 
-    def generate(self, prompt: str, system_instruction: str = None) -> str:
+    def generate(self, prompt: str, system_instruction: str = None, is_json: bool = True) -> str:
         if not self.client:
-            raise RuntimeError("Gemini AI is not configured (missing AI_API_KEY).")
+            raise RuntimeError("Gemini AI is not configured (missing AI_API_KEY / GEMINI_API_KEY / GOOGLE_API_KEY).")
             
         config = types.GenerateContentConfig(
             temperature=0.7
         )
+        if is_json:
+            config.response_mime_type = "application/json"
         if system_instruction:
             config.system_instruction = system_instruction
             
@@ -40,7 +42,7 @@ class GeminiProvider(BaseAIProvider):
             )
             return response.text
         except Exception as e:
-            logger.error(f"GeminiProvider generate error: {e}")
+            logger.error(f"GeminiProvider generate error for model={self.model}: {type(e).__name__}")
             raise e
 
     def get_provider_name(self) -> str:
