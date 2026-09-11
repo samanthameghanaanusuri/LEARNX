@@ -1,0 +1,1063 @@
+{
+  "python": {
+    "key": "python",
+    "course_slug_ref": "python-programming",
+    "title": "Python Career Roadmap",
+    "category": "Programming & AI",
+    "icon": "🐍",
+    "tagline": "From programming fundamentals to automation, backend development, data analysis, and AI engineering.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "Readable, elegant syntax making it the #1 choice for beginners and professionals alike.",
+      "Dominant ecosystem for Artificial Intelligence, Machine Learning, and Data Science.",
+      "High demand in backend API development with Django and FastAPI.",
+      "Versatile automation scripting for DevOps, Web Scraping, and Cybersecurity."
+    ],
+    "what_you_will_learn": [
+      "Core Python syntax, control flow, functions, and data structures.",
+      "Object-Oriented Programming (OOP), Decorators, Iterators, and Generators.",
+      "File I/O, Exception Handling, Module packaging, and JSON data manipulation.",
+      "API communication, Database connectivity (SQLAlchemy/SQLite), and static testing."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "Programming Thinking & Core Syntax",
+        "topics": ["Variables & Data Types", "Conditionals & Logic", "Loops & Iteration", "Basic Functions"],
+        "description": "Build algorithmic problem-solving habits using Python's clean syntax."
+      },
+      {
+        "stage": "Stage 2: Core Programming",
+        "title": "Data Structures & Modular Code",
+        "topics": ["Lists, Tuples & Sets", "Dictionaries & Comprehensions", "Exception Handling", "File I/O & Modules"],
+        "description": "Master structured data handling and write clean, modular reusable code."
+      },
+      {
+        "stage": "Stage 3: Advanced Concepts",
+        "title": "OOP & Functional Mechanics",
+        "topics": ["Classes & Inheritance", "Decorators & Generators", "Lambda & Functional Features", "Testing & Debugging"],
+        "description": "Understand Python's advanced object model, memory behavior, and design patterns."
+      },
+      {
+        "stage": "Stage 4: Practical Application",
+        "title": "Real-World Integration",
+        "topics": ["REST API Consumption", "JSON Serialization", "Database SQL Queries", "Automation Scripts"],
+        "description": "Connect Python scripts to external services, web APIs, and relational databases."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Backend Development",
+        "desc": "Build scalable web APIs and backend services.",
+        "tools": ["FastAPI", "Django", "PostgreSQL", "Redis", "Docker"]
+      },
+      {
+        "name": "Data Science & Analytics",
+        "desc": "Analyze data, generate insights, and build predictive models.",
+        "tools": ["NumPy", "Pandas", "Matplotlib", "Jupyter", "SQL"]
+      },
+      {
+        "name": "AI & Machine Learning",
+        "desc": "Develop machine learning algorithms and neural network solutions.",
+        "tools": ["Scikit-Learn", "PyTorch", "TensorFlow", "OpenCV", "HuggingFace"]
+      },
+      {
+        "name": "Automation & Scripting",
+        "desc": "Automate workflows, web scraping, and system tasks.",
+        "tools": ["Selenium", "BeautifulSoup", "Playwright", "Bash", "Cron"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "CLI Inventory & Expense Tracker",
+        "description": "Interactive command-line tool to track expenses with CSV/JSON storage.",
+        "skills": ["Control Flow", "Dictionaries", "File I/O"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "REST API Automated Scraper & Notifier",
+        "description": "Web scraper that monitors price drops or news updates and sends email notifications.",
+        "skills": ["Requests", "BeautifulSoup", "API Handling", "Exception Handling"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Full-Stack Task & Analytics Engine",
+        "description": "Async FastAPI backend with SQLite/PostgreSQL, authentication, and pandas data report generation.",
+        "skills": ["FastAPI", "SQLAlchemy", "Asyncio", "Pandas", "JWT"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Python Backend Engineer",
+        "skills_required": "Python + FastAPI/Django + SQL + Git + REST APIs",
+        "description": "Designs and maintains microservices, database models, and API endpoints for web applications."
+      },
+      {
+        "role": "Data Analyst / Data Engineer",
+        "skills_required": "Python + Pandas + SQL + Data Visualization + ETL",
+        "description": "Extracts, transforms, and analyzes large datasets to drive business decisions."
+      },
+      {
+        "role": "AI / ML Operations Associate",
+        "skills_required": "Python + NumPy + PyTorch/Scikit-Learn + Model Deployment",
+        "description": "Builds and deploys machine learning models for computer vision, NLP, or predictive analytics."
+      },
+      {
+        "role": "Automation & QA Engineer",
+        "skills_required": "Python + PyTest + Selenium + CI/CD Pipelines",
+        "description": "Automates software testing and deployment workflows."
+      }
+    ],
+    "opportunities": [
+      "Backend Developer Internships",
+      "Data Analytics & Machine Learning Internships",
+      "Freelance Web Scraping & Automation Projects",
+      "Open-Source Python Tooling Contributions",
+      "AI & Data Science Hackathons"
+    ],
+    "additional_skills": ["SQL", "Git & GitHub", "Linux CLI", "Docker", "REST API Architecture", "PyTest"],
+    "next_steps": "After completing Python fundamentals, build 2 portfolio projects and pick either Backend (FastAPI) or Data Science (Pandas) as your primary specialization."
+  },
+  "java": {
+    "key": "java",
+    "course_slug_ref": "java-programming",
+    "title": "Java Career Roadmap",
+    "category": "Enterprise Software & Backend",
+    "icon": "☕",
+    "tagline": "Build secure, high-performance enterprise systems, microservices, and Android applications.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "Industry standard language for large-scale enterprise backend systems and financial infrastructure.",
+      "Strict Object-Oriented paradigm builds strong architectural discipline.",
+      "High performance JVM ecosystem with multithreading and robust memory management.",
+      "Huge job market across Fortune 500 companies and tech enterprises globally."
+    ],
+    "what_you_will_learn": [
+      "Java syntax, primitive types, methods, and control flow.",
+      "Object-Oriented Programming (Classes, Inheritance, Polymorphism, Abstraction, Interfaces).",
+      "Collections Framework (Lists, Sets, Maps), Streams API, and Generics.",
+      "Multithreading, Concurrency, JDBC database access, and Maven build tooling."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "Syntax & Program Structure",
+        "topics": ["Main Method", "Variables & Types", "Control Statements", "Methods & Scope"],
+        "description": "Understand Java's strict compilation, static typing, and basic execution flow."
+      },
+      {
+        "stage": "Stage 2: Object-Oriented Principles",
+        "title": "OOP Architecture",
+        "topics": ["Classes & Objects", "Encapsulation & Access Modifiers", "Inheritance & Polymorphism", "Abstract Classes & Interfaces"],
+        "description": "Design modular software components using true Object-Oriented mechanics."
+      },
+      {
+        "stage": "Stage 3: Enterprise Data Handling",
+        "title": "Collections & Functional Streams",
+        "topics": ["ArrayList, HashSet & HashMap", "Generics", "Java Streams & Lambdas", "Exception Handling"],
+        "description": "Manipulate structured memory collections efficiently using functional pipelines."
+      },
+      {
+        "stage": "Stage 4: Advanced Systems",
+        "title": "Concurrency & Persistence",
+        "topics": ["Multithreading & ExecutorService", "JDBC Database Connectivity", "File I/O & Serialization", "Maven Build Tools"],
+        "description": "Build high-throughput concurrent Java applications backed by relational databases."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Enterprise Backend (Spring Boot)",
+        "desc": "Build enterprise microservices and secure cloud APIs.",
+        "tools": ["Spring Boot", "Spring Security", "Hibernate/JPA", "PostgreSQL", "Kafka"]
+      },
+      {
+        "name": "Android App Development",
+        "desc": "Develop mobile applications for Android operating systems.",
+        "tools": ["Android SDK", "Kotlin/Java", "Jetpack Compose", "Room DB", "Retrofit"]
+      },
+      {
+        "name": "Financial & Systems Engineering",
+        "desc": "Low-latency trading and high-frequency messaging systems.",
+        "tools": ["Concurrent Java", "Netty", "Disruptor", "JVM Tuning", "Docker"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "CLI Banking & Account Management System",
+        "description": "Console app managing accounts, deposits, withdrawals, and persistent transaction logs.",
+        "skills": ["OOP", "Encapsulation", "ArrayList", "File Persistence"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "JDBC Library Management Portal",
+        "description": "Database-backed Java application allowing book issuance, member registration, and fine calculations.",
+        "skills": ["JDBC", "SQL", "PreparedStatements", "Exception Handling"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Spring Boot RESTful Microservice with Auth",
+        "description": "Scalable REST backend with JWT authentication, JPA relational models, and Swagger API docs.",
+        "skills": ["Spring Boot", "Spring Data JPA", "PostgreSQL", "JWT", "Unit Testing"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Java Software Engineer / Developer",
+        "skills_required": "Java + OOP + Collections + SQL + Unit Testing",
+        "description": "Develops core application logic, server components, and business utilities."
+      },
+      {
+        "role": "Backend Spring Boot Engineer",
+        "skills_required": "Java + Spring Boot + JPA/Hibernate + REST APIs + Microservices",
+        "description": "Architects resilient web APIs, databases, and microservices for scalable platforms."
+      },
+      {
+        "role": "Android Developer",
+        "skills_required": "Java/Kotlin + Android SDK + REST APIs + SQLite/Room",
+        "description": "Creates mobile applications for Google's Android ecosystem."
+      }
+    ],
+    "opportunities": [
+      "Enterprise Software Developer Internships",
+      "Backend Engineering Roles",
+      "Banking & FinTech Engineering Training",
+      "Java Open-Source Library Contributions"
+    ],
+    "additional_skills": ["Spring Boot", "SQL & Relational DBs", "Git", "Maven / Gradle", "Docker", "JUnit 5"],
+    "next_steps": "Master Java Collections and OOP principles, then transition to Spring Boot to build REST APIs."
+  },
+  "c": {
+    "key": "c",
+    "course_slug_ref": "c-programming",
+    "title": "C Systems Roadmap",
+    "category": "Systems & Low-Level Engineering",
+    "icon": "⚡",
+    "tagline": "Master memory pointers, hardware interaction, operating systems, and embedded computing.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "The mother of modern programming languages — unlocks true understanding of hardware & memory.",
+      "Essential for Operating System kernels (Linux/Windows), drivers, and embedded microcontrollers.",
+      "Teaches explicit pointer arithmetic, manual memory allocation (`malloc`/`free`), and stack/heap mechanics.",
+      "Unmatched execution speed and minimal runtime footprint."
+    ],
+    "what_you_will_learn": [
+      "C syntax, data types, operators, and control structures.",
+      "Functions, scope, header files, and preprocessor directives.",
+      "Pointers, address arithmetic, memory layout, dynamic memory allocation (`malloc`, `free`).",
+      "Structures (`struct`), Unions, Bit manipulation, File I/O, and custom data structures."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Syntax & Control",
+        "title": "Core Procedural Logic",
+        "topics": ["Data Types & Format Specifiers", "Conditionals & Switch", "Loops & Iteration", "Functions & Prototypes"],
+        "description": "Understand procedural code execution, compilation using GCC, and standard I/O."
+      },
+      {
+        "stage": "Stage 2: Memory & Pointers",
+        "title": "Pointer Mechanics & Arrays",
+        "topics": ["Pointers & Addresses", "Dereferencing & Pointer Arithmetic", "Arrays & Strings", "Passing by Reference"],
+        "description": "Master memory addresses, array indexing pointers, and function parameter mutation."
+      },
+      {
+        "stage": "Stage 3: Data Structures & Dynamic Memory",
+        "title": "Heap Allocation & Custom Types",
+        "topics": ["Dynamic Memory Allocation (malloc/free)", "Structures & Unions", "Bitwise Operators", "File I/O Streams"],
+        "description": "Allocate heap memory dynamically and build custom data structures like linked lists."
+      },
+      {
+        "stage": "Stage 4: Systems Programming",
+        "title": "Low-Level Architecture",
+        "topics": ["POSIX System Calls", "Process Management (fork/exec)", "File Descriptors", "Makefiles & GCC Compilation"],
+        "description": "Interact directly with operating system kernels and manage build pipelines."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Embedded Systems",
+        "desc": "Program microcontrollers, IoT devices, and hardware sensors.",
+        "tools": ["Microchip AVR", "ARM Cortex-M", "STM32", "FreeRTOS", "PlatformIO"]
+      },
+      {
+        "name": "Operating Systems & Kernels",
+        "desc": "Develop OS components, device drivers, and system utilities.",
+        "tools": ["Linux Kernel API", "POSIX", "GCC", "GDB", "Valgrind"]
+      },
+      {
+        "name": "Game Engine & Graphics Low-Level",
+        "desc": "Low-level graphics drivers and performance-critical engines.",
+        "tools": ["OpenGL", "SDL2", "Vulkan", "CMake", "Assembly"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Custom String & Math Processing Utility",
+        "description": "Library of custom string manipulation functions without using `<string.h>`.",
+        "skills": ["Pointers", "Pointer Arithmetic", "ASCII Manipulation"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "Dynamic Memory Linked List Manager",
+        "description": "Memory-safe generic singly and doubly linked list library with zero memory leaks.",
+        "skills": ["malloc", "free", "Structs", "Valgrind Memory Debugging"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Mini Unix Command-Line Shell",
+        "description": "Functional Linux shell supporting process creation (`fork`), command execution (`execvp`), and piping.",
+        "skills": ["POSIX System Calls", "Process Control", "File Descriptors", "Signals"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Embedded Systems Engineer",
+        "skills_required": "C + Microcontrollers (ARM/STM32) + RTOS + Hardware Interfaces (SPI/I2C/UART)",
+        "description": "Writes firmware for IoT devices, automotive systems, medical equipment, and robotics."
+      },
+      {
+        "role": "Systems Programmer / Kernel Engineer",
+        "skills_required": "C + POSIX + Linux Internals + Memory Debugging (Valgrind/GDB)",
+        "description": "Builds operating system modules, compilers, database storage engines, and network drivers."
+      },
+      {
+        "role": "Firmware & Robotics Developer",
+        "skills_required": "C + Electronics + Real-Time Operating Systems + Sensors",
+        "description": "Integrates software algorithms directly onto hardware microchips."
+      }
+    ],
+    "opportunities": [
+      "Embedded Systems Internships",
+      "Systems Programming Training",
+      "Robotics & Hardware Hackathons",
+      "Linux Kernel Community Contributions"
+    ],
+    "additional_skills": ["GCC Compiler Flags", "GDB Debugging", "Valgrind", "Makefile", "Linux CLI", "Assembly Basics"],
+    "next_steps": "Practice pointer manipulation until comfortable, then build a custom data structure library and test memory safety with Valgrind."
+  },
+  "cpp": {
+    "key": "cpp",
+    "course_slug_ref": "cpp-programming",
+    "title": "C++ High-Performance Roadmap",
+    "category": "High-Performance & Game Engineering",
+    "icon": "🚀",
+    "tagline": "Master modern C++, STL, competitive programming, game engine architecture, and high-frequency systems.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "Industry standard for high-performance software: Game Engines (Unreal Engine), Trading Systems, and Browsers.",
+      "Blends low-level control of C with modern Object-Oriented and Generic Programming features.",
+      "Rich Standard Template Library (STL) essential for Data Structures & Competitive Programming.",
+      "Modern C++ (C++11 to C++20) provides smart pointers, move semantics, and safe abstractions."
+    ],
+    "what_you_will_learn": [
+      "C++ syntax, references, streams, and control flow.",
+      "Classes, Constructors/Destructors, Operator Overloading, and Inheritance.",
+      "Pointers, Smart Pointers (`unique_ptr`, `shared_ptr`), and RAII memory management.",
+      "Standard Template Library (Vector, Map, Set, Queue), Algorithms, Templates, and Lambda expressions."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "C++ Basics & References",
+        "topics": ["Input/Output Streams (`cin`, `cout`)", "References vs Pointers", "Functions & Overloading", "Namespace"],
+        "description": "Transition to C++ stream syntax, references, and modern function features."
+      },
+      {
+        "stage": "Stage 2: OOP & Resource Management",
+        "title": "Classes & RAII Mechanics",
+        "topics": ["Classes & Member Functions", "Constructors & Destructors", "Operator Overloading", "RAII Memory Control"],
+        "description": "Build custom types and ensure resources are automatically released using RAII."
+      },
+      {
+        "stage": "Stage 3: Standard Template Library (STL)",
+        "title": "Containers & Algorithms",
+        "topics": ["Vectors, Lists & Deques", "Maps, Sets & Unordered Hash Maps", "STL Algorithms (`sort`, `find`)", "Iterators"],
+        "description": "Leverage optimized STL data structures for efficient problem-solving."
+      },
+      {
+        "stage": "Stage 4: Modern C++ Architecture",
+        "title": "Templates & Smart Pointers",
+        "topics": ["Template Functions & Classes", "Smart Pointers (`unique_ptr`, `shared_ptr`)", "Move Semantics & Rvalue References", "Lambdas"],
+        "description": "Write fast, template-driven C++ code with automated memory safety."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Game Development (Unreal Engine)",
+        "desc": "Build 3D games and physics systems.",
+        "tools": ["Unreal Engine 5", "C++", "DirectX/Vulkan", "PhysX", "CMake"]
+      },
+      {
+        "name": "Competitive Programming & DSA",
+        "desc": "Solve algorithmic challenges with lightning speed.",
+        "tools": ["C++ STL", "Fast I/O", "Codeforces / LeetCode", "GCC"]
+      },
+      {
+        "name": "High-Frequency Trading (HFT)",
+        "desc": "Ultra low-latency financial systems.",
+        "tools": ["Low-Latency C++", "Template Metaprogramming", "Linux Kernel Bypassing", "SIMD"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Student Management System with File Persistence",
+        "description": "Object-oriented C++ application storing student records with search and filter.",
+        "skills": ["Classes", "File Streams (fstream)", "Vectors"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "2D Arcade Game / Physics Simulation",
+        "description": "Interactive 2D game (e.g. Snake or Pong) using C++ and the SFML library.",
+        "skills": ["SFML", "OOP", "Game Loop", "Collision Detection"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Custom STL Container & Memory Pool Allocator",
+        "description": "Template-based memory pool allocator and custom vector implementation.",
+        "skills": ["Templates", "Custom Allocators", "Smart Pointers", "Move Semantics"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "C++ Game Developer",
+        "skills_required": "C++ + Unreal Engine + Math/Physics + Data Structures",
+        "description": "Engineers game mechanics, graphics shaders, and physics in AAA game studios."
+      },
+      {
+        "role": "Quant Software Engineer / HFT Developer",
+        "skills_required": "Modern C++ + STL + Low-Latency Optimization + Linux",
+        "description": "Designs microsecond-latency trading platforms and execution algorithms."
+      },
+      {
+        "role": "Systems / Graphics Engineer",
+        "skills_required": "C++ + OpenGL/Vulkan + Hardware Architecture + CMake",
+        "description": "Builds 3D rendering engines, CAD software, and system runtime tools."
+      }
+    ],
+    "opportunities": [
+      "Game Engineering Internships",
+      "Quantitative Trading Engineering Roles",
+      "Competitive Programming Contests (ICPC, CodeChef, Codeforces)",
+      "Graphics & Simulation Projects"
+    ],
+    "additional_skills": ["Modern C++ (C++17/20)", "CMake", "GDB", "Git", "SFML / OpenGL", "Algorithm Complexity"],
+    "next_steps": "Master the STL containers, practice LeetCode/Codeforces problems in C++, and build a 2D game using SFML or Unreal Engine."
+  },
+  "html": {
+    "key": "html",
+    "course_slug_ref": "html-web-development",
+    "title": "HTML Web Structure Roadmap",
+    "category": "Frontend Web Development",
+    "icon": "🌐",
+    "tagline": "Construct modern, accessible, and SEO-optimized web page foundations with semantic HTML5.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "The fundamental building block of every website and web application on the planet.",
+      "Semantic HTML improves SEO ranking and web accessibility (WCAG compliance).",
+      "Provides structured DOM hierarchy required for CSS styling and JavaScript interactivity.",
+      "Easy to learn yet critical for professional web standards."
+    ],
+    "what_you_will_learn": [
+      "HTML5 document structure, doctype, head metadata, and body tags.",
+      "Text formatting, semantic elements (`header`, `nav`, `main`, `article`, `footer`).",
+      "Hyperlinks, image optimization, audio/video multimedia embedding.",
+      "Lists, HTML tables, forms, input validation, and ARIA accessibility roles."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "HTML Document Hierarchy",
+        "topics": ["`<!DOCTYPE html>` & `<html>`", "`<head>` & `<title>`", "Headings `<h1>`-`<h6>`", "Paragraphs & Text Tags"],
+        "description": "Learn basic markup elements, attribute syntax, and clean nesting."
+      },
+      {
+        "stage": "Stage 2: Content & Media",
+        "title": "Links, Media & Lists",
+        "topics": ["Anchor Links `<a>` & Attributes", "Images `<img>` & Alt Text", "Ordered/Unordered Lists", "Audio & Video Embedding"],
+        "description": "Embed rich media, relative/absolute links, and structured content sequences."
+      },
+      {
+        "stage": "Stage 3: Data & User Inputs",
+        "title": "Tables & Interactive Forms",
+        "topics": ["HTML Tables (`<thead>`, `<tbody>`, `<td>`)", "Forms `<form>` & Actions", "Input Types & Validations", "Textareas & Dropdowns"],
+        "description": "Collect user inputs safely and format tabular data structures."
+      },
+      {
+        "stage": "Stage 4: Modern Web Standards",
+        "title": "Semantic HTML5 & Accessibility",
+        "topics": ["Semantic Layout Elements", "SEO Meta Tags & Open Graph", "ARIA Roles & Attributes", "Web Accessibility (WCAG)"],
+        "description": "Build fully accessible, search-engine optimized web document structures."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Frontend Web Development",
+        "desc": "Combine HTML with CSS and JS for dynamic web apps.",
+        "tools": ["HTML5", "CSS3", "JavaScript", "React", "Next.js"]
+      },
+      {
+        "name": "Email Template Engineering",
+        "desc": "Design responsive, cross-client HTML email newsletters.",
+        "tools": ["HTML Tables", "Inline CSS", "MJML", "Litmus"]
+      },
+      {
+        "name": "Web Accessibility (a11y) Specialist",
+        "desc": "Audit and fix websites for screen readers and disability compliance.",
+        "tools": ["ARIA", "Screen Readers", "WAVE Audit", "Lighthouse"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Personal Profile & Resume Web Page",
+        "description": "Structured single-page resume featuring headings, work experience lists, and contact links.",
+        "skills": ["Semantic Tags", "Lists", "Links", "Images"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "Multi-Step Product Registration Form",
+        "description": "Complex form collecting user profile information with native HTML input validation.",
+        "skills": ["Form Controls", "Input Validation", "Fieldsets", "Labels"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Accessible Documentation Portal",
+        "description": "Fully WCAG-compliant documentation layout with semantic sections, ARIA landmarks, and tabular summaries.",
+        "skills": ["Semantic HTML5", "ARIA Attributes", "SEO Meta", "Table Structuring"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Frontend Developer (Foundation)",
+        "skills_required": "HTML5 + CSS3 + JavaScript",
+        "description": "Constructs the visual user interfaces of websites and web applications."
+      },
+      {
+        "role": "Web Accessibility Specialist",
+        "skills_required": "Semantic HTML5 + ARIA + Accessibility Auditing Tools",
+        "description": "Ensures digital products comply with international web accessibility standards."
+      },
+      {
+        "role": "Content Operations / SEO Specialist",
+        "skills_required": "HTML5 + Meta Tags + Structured Data + Content Strategy",
+        "description": "Optimizes website structure to maximize search engine indexing and traffic."
+      }
+    ],
+    "opportunities": [
+      "Junior Web Developer Internships",
+      "Website Maintenance & Content Updates",
+      "Freelance HTML Template Creation",
+      "Non-Profit Website Building"
+    ],
+    "additional_skills": ["CSS3", "JavaScript", "SEO Best Practices", "Git & GitHub Pages", "Browser DevTools"],
+    "next_steps": "Master HTML5 semantic elements, then move directly to CSS to style your web document layouts."
+  },
+  "css": {
+    "key": "css",
+    "course_slug_ref": "css-responsive-design",
+    "title": "CSS Responsive Design Roadmap",
+    "category": "Frontend Web Development",
+    "icon": "🎨",
+    "tagline": "Design visually stunning, responsive, and animated user interfaces with modern CSS3.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "Transforms raw HTML into gorgeous, modern, user-friendly digital experiences.",
+      "Essential for building mobile-responsive layouts using Flexbox and CSS Grid.",
+      "Enables smooth micro-animations, glassmorphism, and interactive visual polish.",
+      "High demand across web agencies, product companies, and UI design engineering."
+    ],
+    "what_you_will_learn": [
+      "CSS selectors, specificity, cascade rules, and colors/units.",
+      "The CSS Box Model (margin, border, padding, content, box-sizing).",
+      "Flexbox layout system, CSS Grid, media queries, and responsive design.",
+      "Transitions, keyframe animations, CSS variables, and modern glassmorphism UI."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "Styling & Selectors",
+        "topics": ["Element, Class & ID Selectors", "Colors & Typography", "Specificity & Cascade", "Units (px, rem, %, vh)"],
+        "description": "Apply styles to HTML elements using clean rules and predictable specificity."
+      },
+      {
+        "stage": "Stage 2: Layout Mechanics",
+        "title": "Box Model & Positioning",
+        "topics": ["Margin, Border, Padding", "`box-sizing: border-box`", "Display (block, inline, flex)", "Position (relative, absolute, sticky)"],
+        "description": "Master element dimensions, spacing rules, and overlay positioning."
+      },
+      {
+        "stage": "Stage 3: Responsive Architecture",
+        "title": "Flexbox, Grid & Media Queries",
+        "topics": ["Flexbox Alignment & Direction", "CSS Grid Columns & Rows", "Media Queries (`@media`)", "Mobile-First Design"],
+        "description": "Create fluid web layouts that automatically adapt to phones, tablets, and desktops."
+      },
+      {
+        "stage": "Stage 4: Advanced Visuals",
+        "title": "Animations & Design Systems",
+        "topics": ["CSS Custom Properties (Variables)", "Transitions & Keyframe Animations", "Glassmorphism & Gradients", "Dark Mode Styling"],
+        "description": "Craft polished, interactive web designs with subtle micro-animations and custom themes."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "UI Engineering / Design Systems",
+        "desc": "Build reusable UI component libraries for major web applications.",
+        "tools": ["CSS Variables", "TailwindCSS", "Storybook", "Sass", "Figma"]
+      },
+      {
+        "name": "Creative Web Animation",
+        "desc": "Create interactive storytelling websites and 3D web animations.",
+        "tools": ["CSS Animations", "GSAP", "Three.js", "SVG Animation"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Responsive Product Landing Card",
+        "description": "Sleek product showcase card styled with custom fonts, hover effects, and CSS variables.",
+        "skills": ["Box Model", "Flexbox", "Hover Transitions"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "Mobile-First SaaS Pricing Dashboard",
+        "description": "Fully responsive pricing table using CSS Grid and Flexbox with mobile-first media queries.",
+        "skills": ["CSS Grid", "Media Queries", "Flexbox", "Typography"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Futuristic Glassmorphism Dashboard UI",
+        "description": "Dark-mode dashboard layout featuring glassmorphic panels, glowing cards, and custom CSS keyframe animations.",
+        "skills": ["Glassmorphism", "CSS Animations", "Variables", "Custom Scrollbars"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "UI Engineer / Frontend Designer",
+        "skills_required": "HTML5 + CSS3 + Flexbox/Grid + Responsive Design + Tailwind/Sass",
+        "description": "Translates Figma UI designs into pixel-perfect, responsive web interfaces."
+      },
+      {
+        "role": "Frontend Web Developer",
+        "skills_required": "HTML5 + CSS3 + JavaScript + React/Vue",
+        "description": "Builds both the layout and interactive client-side logic for modern web apps."
+      }
+    ],
+    "opportunities": [
+      "Frontend UI Development Internships",
+      "Freelance Web Design & Styling",
+      "Template Marketplace Creation (ThemeForest)",
+      "UI Component Library Contributions"
+    ],
+    "additional_skills": ["JavaScript", "TailwindCSS", "Sass / SCSS", "Figma Basics", "Git"],
+    "next_steps": "Master Flexbox and CSS Grid, build 3 responsive web templates, and move to JavaScript for interactive logic."
+  },
+  "javascript": {
+    "key": "javascript",
+    "course_slug_ref": "javascript-programming",
+    "title": "JavaScript Programming Roadmap",
+    "category": "Web Development & Frontend",
+    "icon": "🟨",
+    "tagline": "Build dynamic, interactive web applications and full-stack solutions with modern JavaScript (ES6+).",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "The undisputed programming language of the Web — runs natively in every modern web browser.",
+      "Powers interactive UIs with frontend frameworks like React, Vue, and Next.js.",
+      "Enables full-stack development on the backend using Node.js and Express.",
+      "High job availability and vibrant global developer ecosystem."
+    ],
+    "what_you_will_learn": [
+      "JS syntax, variables (`const`, `let`), data types, and functions.",
+      "DOM manipulation, Event Listeners, and interactive UI updates.",
+      "ES6+ features (Arrow functions, Destructuring, Spread operator, Modules).",
+      "Asynchronous JS (Callbacks, Promises, `async`/`await`), Fetch API, and LocalStorage."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "JS Basics & Logic",
+        "topics": ["Variables (`let`, `const`)", "Data Types & Operators", "Conditionals & Loops", "Functions & Scope"],
+        "description": "Learn core programming concepts and function execution in JavaScript."
+      },
+      {
+        "stage": "Stage 2: DOM & Events",
+        "title": "Interactive Web Pages",
+        "topics": ["Selecting Elements (`querySelector`)", "DOM Manipulation", "Event Listeners (`click`, `submit`)", "Form Handling"],
+        "description": "Connect JavaScript to HTML/CSS to make web pages respond to user actions."
+      },
+      {
+        "stage": "Stage 3: Modern ES6+ Features",
+        "title": "ES6+ Modern Syntax",
+        "topics": ["Arrow Functions", "Array Methods (`map`, `filter`, `reduce`)", "Object Destructuring & Spread", "ES Modules"],
+        "description": "Write concise, modern JavaScript using powerful functional collection methods."
+      },
+      {
+        "stage": "Stage 4: Asynchronous JS & APIs",
+        "title": "Async Operations & APIs",
+        "topics": ["Promises & Async/Await", "Fetch API & JSON Parsing", "LocalStorage & SessionStorage", "Error Handling (`try/catch`)"],
+        "description": "Fetch data asynchronously from REST APIs and persist user state in the browser."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Frontend Frameworks (React / Next.js)",
+        "desc": "Build reactive single-page applications and server-rendered web portals.",
+        "tools": ["React", "Next.js", "Redux/Zustand", "TailwindCSS", "TypeScript"]
+      },
+      {
+        "name": "Full-Stack Backend (Node.js)",
+        "desc": "Develop server-side REST APIs and real-time backend systems.",
+        "tools": ["Node.js", "Express.js", "MongoDB / PostgreSQL", "Socket.io", "JWT"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Interactive To-Do & Task Manager",
+        "description": "Dynamic task list with add, mark complete, filter, and LocalStorage persistence.",
+        "skills": ["DOM Manipulation", "Event Listeners", "LocalStorage", "Array Methods"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "Live Weather & Forecast Web App",
+        "description": "Fetches real-time weather data from an external API based on user city input.",
+        "skills": ["Fetch API", "Async/Await", "Promises", "DOM Updates", "Error Handling"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Full-Featured E-Commerce Shopping Cart",
+        "description": "Interactive storefront with product filtering, dynamic cart calculation, and local checkout flow.",
+        "skills": ["ES6 Modules", "State Management", "Array Reduce/Filter", "API Integration"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Frontend JavaScript Developer",
+        "skills_required": "JavaScript ES6+ + HTML/CSS + React/Vue + Fetch API + Git",
+        "description": "Builds interactive user interfaces, web applications, and stateful web components."
+      },
+      {
+        "role": "Full-Stack Node.js Developer",
+        "skills_required": "JavaScript + Node.js + Express + React + Database (MongoDB/PostgreSQL)",
+        "description": "Handles both frontend UI and backend server/database application development."
+      }
+    ],
+    "opportunities": [
+      "Frontend Developer Internships",
+      "Full-Stack Web Development Roles",
+      "Freelance Web App Development",
+      "Open-Source JS Ecosystem Contributions"
+    ],
+    "additional_skills": ["TypeScript", "React.js", "Node.js", "Git & GitHub", "REST APIs", "Webpack / Vite"],
+    "next_steps": "Master ES6+ array methods and Async/Await, build 2 API-driven web applications, and start learning React or Node.js."
+  },
+  "dbms": {
+    "key": "dbms",
+    "course_slug_ref": "dbms-mastery",
+    "title": "DBMS & Database Engineering Roadmap",
+    "category": "Database Systems & Data Architecture",
+    "icon": "🗄️",
+    "tagline": "Design robust relational schemas, master SQL queries, normalization, and ACID transaction mechanics.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "Data is the foundation of modern applications — databases power every tech company.",
+      "SQL is an indispensable skill required across software engineering, data science, and DevOps.",
+      "Teaches relational data modeling, indexing, and query optimization for high performance.",
+      "Crucial understanding of data integrity, transactions, and ACID guarantees."
+    ],
+    "what_you_will_learn": [
+      "Relational model, primary keys, foreign keys, and ER diagrams.",
+      "SQL Data Definition (DDL) and Data Manipulation (DML) statements.",
+      "Complex SQL Joins, Aggregations (`GROUP BY`, `HAVING`), and Subqueries.",
+      "Database Normalization (1NF to 3NF/BCNF), Indexing, and ACID Transactions."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "Relational Concepts & Basic SQL",
+        "topics": ["Tables, Rows & Columns", "Primary & Foreign Keys", "SELECT, WHERE, ORDER BY", "INSERT, UPDATE, DELETE"],
+        "description": "Learn relational model basics and fundamental SQL data operations."
+      },
+      {
+        "stage": "Stage 2: Querying & Aggregation",
+        "title": "Joins & Complex Filtering",
+        "topics": ["INNER, LEFT, RIGHT Joins", "Aggregations (`COUNT`, `SUM`, `AVG`)", "`GROUP BY` & `HAVING` Clauses", "Subqueries & Views"],
+        "description": "Query multi-table relational schemas and calculate aggregated business metrics."
+      },
+      {
+        "stage": "Stage 3: Database Design",
+        "title": "Normalization & Schema Modeling",
+        "topics": ["Entity-Relationship (ER) Diagrams", "Functional Dependencies", "1NF, 2NF, & 3NF Normalization", "Integrity Constraints"],
+        "description": "Design clean, non-redundant database schemas that enforce referential integrity."
+      },
+      {
+        "stage": "Stage 4: Advanced Database Architecture",
+        "title": "Transactions & Performance",
+        "topics": ["ACID Properties", "Transactions (`COMMIT`, `ROLLBACK`)", "Indexing (`B-Tree`) & Optimization", "Concurrency & Isolation Levels"],
+        "description": "Optimize query execution speed and ensure transaction safety under concurrent loads."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Database Administrator (DBA)",
+        "desc": "Manage database uptime, backups, security, and performance tuning.",
+        "tools": ["PostgreSQL", "MySQL", "pgAdmin", "Replication", "Backups"]
+      },
+      {
+        "name": "Data Engineer / Analytics Engineer",
+        "desc": "Architect data warehouses and ETL pipelines for analytics.",
+        "tools": ["Snowflake", "BigQuery", "dbt", "PostgreSQL", "Airflow"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "E-Commerce Relational Schema & SQL Queries",
+        "description": "Design users, products, orders, and order_items tables with key constraints and sample queries.",
+        "skills": ["DDL", "Foreign Keys", "INSERT/SELECT", "JOINs"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "University Academic Portal Database",
+        "description": "Normalized 3NF database schema tracking students, courses, enrollments, and grades with aggregated GPA queries.",
+        "skills": ["3NF Normalization", "GROUP BY", "Complex Joins", "Subqueries"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Bank Transaction Engine with ACID Guarantees",
+        "description": "Transaction script simulating concurrent money transfers using explicit isolation levels and rollback protection.",
+        "skills": ["ACID Transactions", "Explicit Locking", "B-Tree Indexes", "Performance Profiling"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Database Administrator (DBA)",
+        "skills_required": "SQL + PostgreSQL/MySQL + Indexing + Backups + Replication",
+        "description": "Maintains database reliability, user security, performance indexing, and disaster recovery."
+      },
+      {
+        "role": "Data Engineer",
+        "skills_required": "SQL + Python + Data Warehousing + ETL Pipelines + Modeling",
+        "description": "Builds data pipelines, analytical schemas, and data warehouse infrastructure."
+      },
+      {
+        "role": "Backend Engineer (Database Focus)",
+        "skills_required": "SQL + ORMs (SQLAlchemy/Hibernate) + Index Tuning + Transactions",
+        "description": "Optimizes backend database queries and application persistence logic."
+      }
+    ],
+    "opportunities": [
+      "Database Administrator Internships",
+      "Data Engineering Roles",
+      "SQL Query Optimization Freelancing",
+      "Database Analytics Projects"
+    ],
+    "additional_skills": ["PostgreSQL", "MySQL / MariaDB", "Python SQL Drivers", "ORM Libraries", "Redis Caching"],
+    "next_steps": "Practice complex SQL joins and GROUP BY queries, then design an ER diagram for a real-world app and implement it in PostgreSQL."
+  },
+  "dsa": {
+    "key": "dsa",
+    "course_slug_ref": "dsa-mastery",
+    "title": "Data Structures & Algorithms Roadmap",
+    "category": "Computer Science & Problem Solving",
+    "icon": "🧠",
+    "tagline": "Master core data structures, algorithmic paradigms, Big-O complexity, and technical interview problem solving.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "The core foundation of computer science — teaches high-efficiency problem solving.",
+      "Primary assessment criteria for software engineering interviews at top tech companies (FAANG/MAANG).",
+      "Enables writing optimal code that runs fast and scales to millions of users.",
+      "Deepens understanding of memory management, searching, sorting, and graph topologies."
+    ],
+    "what_you_will_learn": [
+      "Big-O Space & Time Complexity Analysis.",
+      "Arrays, Linked Lists, Stacks, Queues, and Hash Tables.",
+      "Binary Trees, Binary Search Trees (BST), Heaps, and Graph Traversals (BFS/DFS).",
+      "Searching (Binary Search), Sorting (QuickSort, MergeSort), Recursion, and Dynamic Programming."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Complexity & Linear Structures",
+        "title": "Complexity Analysis & Arrays/Lists",
+        "topics": ["Big-O Time & Space Notation", "Arrays & Memory Layout", "Singly & Doubly Linked Lists", "Two-Pointers & Sliding Window"],
+        "description": "Analyze algorithm speed and master fundamental linear memory structures."
+      },
+      {
+        "stage": "Stage 2: Stacks, Queues & Searching",
+        "title": "Abstract Data Types & Search",
+        "topics": ["LIFO Stacks & FIFO Queues", "Recursion Basics", "Linear vs Binary Search", "Sorting Algorithms (MergeSort, QuickSort)"],
+        "description": "Implement stack/queue structures and master divide-and-conquer searching."
+      },
+      {
+        "stage": "Stage 3: Hierarchical Structures",
+        "title": "Trees & Heaps",
+        "topics": ["Binary Trees & Traversals (In/Pre/Post)", "Binary Search Trees (BST)", "Min/Max Heaps & Priority Queues", "Hash Tables & Collisions"],
+        "description": "Manage ordered hierarchical data and instant O(1) hash map lookups."
+      },
+      {
+        "stage": "Stage 4: Advanced Algorithmic Paradigms",
+        "title": "Graphs & Dynamic Programming",
+        "topics": ["Graph Representations (Adjacency List)", "BFS & DFS Graph Traversals", "Dynamic Programming & Memoization", "Greedy Algorithms"],
+        "description": "Solve complex network graph problems and optimize overlapping subproblems."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Competitive Programming",
+        "desc": "Excel in speed coding contests and algorithmic competitions.",
+        "tools": ["C++ STL", "Fast Algorithms", "Codeforces", "LeetCode Hard"]
+      },
+      {
+        "name": "Software Engineering Interview Prep",
+        "desc": "Crack technical coding interviews at top product companies.",
+        "tools": ["LeetCode Medium/Hard", "Pattern Recognition", "System Design Basics"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Custom Data Structure Implementation Library",
+        "description": "Implement custom Dynamic Array, Singly Linked List, and Stack from scratch without built-in libraries.",
+        "skills": ["Pointers/References", "Memory Allocation", "Big-O Analysis"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "Expression Evaluator & Syntax Tree Visualizer",
+        "description": "Evaluates math expressions with parentheses using Stack data structures and constructs an expression tree.",
+        "skills": ["Stack Data Structure", "Binary Trees", "Recursion", "Infix to Postfix"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Shortest Path City Navigation Engine (Dijkstra/BFS)",
+        "description": "Graph-based routing engine that finds the shortest path between locations using BFS and Dijkstra's algorithm.",
+        "skills": ["Graph Adjacency List", "Priority Queues", "Dijkstra Algorithm", "BFS"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "Software Development Engineer (SDE I/II)",
+        "skills_required": "DSA + Language Proficiency (C++/Java/Python) + Problem Solving + System Design",
+        "description": "Designs robust software features, optimizes algorithms, and solves complex engineering bottlenecks."
+      },
+      {
+        "role": "Algorithm / Research Developer",
+        "skills_required": "DSA + Advanced Math + Graph Theory + Dynamic Programming",
+        "description": "Develops core search, recommendation, routing, or optimization algorithms."
+      }
+    ],
+    "opportunities": [
+      "Software Development Engineer (SDE) Internships",
+      "Competitive Coding Contests (ICPC, Google Kickstart, LeetCode Weekly)",
+      "Technical Coding Interviews",
+      "Algorithm Research Projects"
+    ],
+    "additional_skills": ["LeetCode Problem Solving", "C++ STL / Java Collections", "Git", "System Design Basics"],
+    "next_steps": "Solve 50 LeetCode problems categorized by pattern (Two Pointers, Sliding Window, BFS/DFS, Binary Search) to solidify algorithmic thinking."
+  },
+  "cybersecurity": {
+    "key": "cybersecurity",
+    "course_slug_ref": "cyber-security",
+    "title": "Cybersecurity & InfoSec Roadmap",
+    "category": "Cybersecurity & Security Engineering",
+    "icon": "🛡️",
+    "tagline": "Protect digital infrastructure, master network defense, ethical hacking concepts, and security operations.",
+    "difficulty_progression": "Beginner → Intermediate → Advanced",
+    "why_learn": [
+      "Critical global necessity — cyber attacks are among the biggest risks facing modern enterprises.",
+      "High-paying career paths across Security Operations (SecOps), Penetration Testing, and Incident Response.",
+      "Teaches deep networking protocols, Linux security, cryptography, and vulnerability assessment.",
+      "Massive industry talent shortage with high job security."
+    ],
+    "what_you_will_learn": [
+      "Security fundamentals, CIA Triad (Confidentiality, Integrity, Availability), and threat vectors.",
+      "Networking protocols (TCP/IP, DNS, HTTP/S, Firewalls) and packet analysis.",
+      "Linux security administration, privilege escalation, and command line tools.",
+      "Web application security (OWASP Top 10), cryptography basics, and SOC incident analysis."
+    ],
+    "skill_stages": [
+      {
+        "stage": "Stage 1: Foundation",
+        "title": "Security Principles & OS Basics",
+        "topics": ["CIA Triad & Threat Types", "Linux Administration CLI", "User Permissions & Privileges", "Basic Cryptography"],
+        "description": "Understand core security objectives and master Linux CLI administration."
+      },
+      {
+        "stage": "Stage 2: Network Security",
+        "title": "Networking Protocols & Analysis",
+        "topics": ["TCP/IP Model & Ports", "DNS, DHCP & HTTP/S Mechanics", "Packet Capture (`Wireshark`)", "Firewalls & VPNs"],
+        "description": "Analyze network traffic packets and configure protective network barriers."
+      },
+      {
+        "stage": "Stage 3: Application & Web Security",
+        "title": "Vulnerability Assessment",
+        "topics": ["OWASP Top 10 (SQLi, XSS, CSRF)", "Port Scanning (`Nmap`)", "Authentication & Session Security", "Vulnerability Scanning"],
+        "description": "Identify common web application flaws and perform vulnerability scans."
+      },
+      {
+        "stage": "Stage 4: Security Operations & Defense",
+        "title": "Incident Response & Blue Teaming",
+        "topics": ["Log Analysis & SIEM Tools", "Incident Response Workflows", "Endpoint Detection (EDR)", "Security Auditing"],
+        "description": "Monitor system logs, detect intrusion attempts, and respond to security incidents."
+      }
+    ],
+    "specialization_branches": [
+      {
+        "name": "Defensive Security (Blue Team / SOC)",
+        "desc": "Monitor networks, analyze threat logs, and respond to cyber attacks.",
+        "tools": ["Wireshark", "SIEM (Splunk/ELK)", "Snort IDS", "Linux", "Sysmon"]
+      },
+      {
+        "name": "Offensive Security (Red Team / Pen Testing)",
+        "desc": "Ethically test systems for vulnerabilities before attackers find them.",
+        "tools": ["Kali Linux", "Nmap", "Burp Suite", "Metasploit", "Python"]
+      }
+    ],
+    "projects": [
+      {
+        "level": "Beginner",
+        "title": "Linux System Hardening & Audit Script",
+        "description": "Bash/Python script auditing open ports, user privileges, and SSH configuration on a Linux VM.",
+        "skills": ["Linux CLI", "SSH Security", "Scripting", "Permissions"]
+      },
+      {
+        "level": "Intermediate",
+        "title": "Wireshark Packet Analysis & Intrusion Report",
+        "description": "Analyze pcap traffic files to detect port scans, unencrypted password transmissions, and ARP spoofing.",
+        "skills": ["Wireshark", "Network Protocols", "Packet Analysis", "Reporting"]
+      },
+      {
+        "level": "Advanced",
+        "title": "Web Application OWASP Vulnerability Lab",
+        "description": "Identify, document, and remediate SQL Injection and Cross-Site Scripting (XSS) vulnerabilities in a target web application.",
+        "skills": ["OWASP Top 10", "Burp Suite", "Nmap", "Input Sanitization"]
+      }
+    ],
+    "career_directions": [
+      {
+        "role": "SOC Analyst (Security Operations Center)",
+        "skills_required": "Networking + Log Analysis + SIEM Tools + Incident Response + Linux",
+        "description": "Monitors enterprise security feeds, detects threats, and mitigates live cyber attacks."
+      },
+      {
+        "role": "Junior Penetration Tester / Ethical Hacker",
+        "skills_required": "Linux + Networking + Nmap/Burp Suite + Web Security + Scripting",
+        "description": "Simulates cyber attacks to discover and report security vulnerabilities."
+      },
+      {
+        "role": "Cybersecurity Specialist / Administrator",
+        "skills_required": "Firewalls + Access Control + Cryptography + Systems Auditing",
+        "description": "Configures and maintains organizational security policies and defense infrastructure."
+      }
+    ],
+    "opportunities": [
+      "SOC Analyst & Cyber Security Internships",
+      "Capture The Flag (CTF) Competitions (TryHackMe, HackTheBox)",
+      "Bug Bounty Programs (HackerOne, Bugcrowd)",
+      "Security Auditing Projects"
+    ],
+    "additional_skills": ["Networking (CompTIA Network+)", "Linux Security", "Python for Security", "Wireshark", "Burp Suite"],
+    "next_steps": "Set up a Kali Linux VM, complete beginner TryHackMe rooms, and practice analyzing network packets in Wireshark."
+  }
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEARNX — Interactive Career Roadmaps</title>
+    <meta name="description" content="Explore interactive career roadmaps for programming, web development, systems engineering, databases, and cybersecurity in LEARNX.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/roadmap.css">
+</head>
+<body>
+    <!-- Navbar matching LEARNX visual design -->
+    <nav class="navbar glass-panel" style="border-radius: 0; position: sticky; top: 0; z-index: 100;">
+        <div class="nav-brand">
+            <a href="/dashboard.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                <span class="nav-logo">⚡</span> LEARNX
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/subject.html">Subjects</a>
+            <a href="/roadmap.html" class="active">Roadmap</a>
+            <a href="/progress.html">Progress</a>
+        </div>
+    </nav>
+
+    <div class="roadmap-container">
+        <!-- 1. Catalog Wrapper (Default View) -->
+        <div id="roadmap-catalog-wrapper">
+            <!-- Hero Banner -->
+            <header class="roadmap-hero">
+                <h1 class="roadmap-hero-title">LEARNX Interactive Career Roadmaps</h1>
+                <p class="roadmap-hero-sub">
+                    Discover your career path from foundational concepts to advanced specializations, portfolio projects, companion skills, and technical job directions.
+                </p>
+                <!-- Controls / Filters -->
+                <div class="roadmap-controls">
+                    <button class="roadmap-filter-btn active" data-filter="all">All Roadmaps</button>
+                    <button class="roadmap-filter-btn" data-filter="programming">Programming & AI</button>
+                    <button class="roadmap-filter-btn" data-filter="web">Web Development</button>
+                    <button class="roadmap-filter-btn" data-filter="systems">Systems & Performance</button>
+                    <button class="roadmap-filter-btn" data-filter="database">Data & Security</button>
+                </div>
+            </header>
+
+            <!-- Roadmap Catalog Grid -->
+            <div id="roadmap-grid" class="roadmap-grid">
+                <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    Loading Career Roadmaps...
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Detailed Roadmap View Wrapper -->
+        <div id="roadmap-detail-wrapper" class="roadmap-detail-wrapper">
+            <div id="roadmap-detail-content">
+                <!-- Dynamically populated by roadmap.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/roadmap.js"></script>
+</body>
+</html>

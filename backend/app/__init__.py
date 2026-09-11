@@ -52,4 +52,7 @@ def create_app(config_class=Config):
     from app.routes.ai_agent import ai_bp
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
 
+    from app.routes.roadmap import roadmap_bp
+    app.register_blueprint(roadmap_bp, url_prefix='/api/roadmap')
+
     return app

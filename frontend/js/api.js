@@ -115,6 +115,15 @@ const LEARNX_API = {
         return await apiRequest('/assessments/submit', 'POST', { answers });
     },
 
+    // Roadmaps
+    async getRoadmaps() {
+        return await apiRequest('/roadmap');
+    },
+
+    async getRoadmapDetail(key) {
+        return await apiRequest(`/roadmap/${key}`);
+    },
+
     // Performance (BKT & History)
     async recordAttempt(studentId, questionId, studentAnswer) {
         return await apiRequest('/performance/attempt', 'POST', {
