@@ -27,9 +27,8 @@ def add_cpp_course():
             # 1. Check if course already exists to avoid duplication
             existing = Course.query.filter_by(slug=course_cpp["course_id"]).first()
             if existing:
-                print(f"Course {course_cpp['course_id']} already exists. Deleting it to re-insert cleanly (only the C++ course will be deleted).")
-                db.session.delete(existing)
-                db.session.flush()
+                print(f"Course {course_cpp['course_id']} already exists. Skipping.")
+                return
 
             # 2. Add Course
             print(f"Adding course: {course_cpp['title']}")

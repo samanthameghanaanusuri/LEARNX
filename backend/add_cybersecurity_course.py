@@ -37,9 +37,8 @@ def add_cybersecurity_course():
             # 1. Check if course already exists to avoid duplication
             existing = Course.query.filter_by(slug=course_slug).first()
             if existing:
-                print(f"Course {course_slug} already exists. Deleting it to re-insert cleanly (only the Cyber Security course will be deleted).")
-                db.session.delete(existing)
-                db.session.flush()
+                print(f"Course {course_slug} already exists. Skipping.")
+                return
 
             # 2. Add Course
             print(f"Adding course: {course_title}")
