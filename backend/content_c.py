@@ -1820,13 +1820,13 @@ int main(void) {
     ,
         {
             "question_text": "In C, how is a string represented in memory?",
-            "options": ["As a dedicated String primitive type", "As a linked list of characters", "As a contiguous array of characters terminated by a null character ('\0')", "As a struct containing a char array and a length integer"],
-            "correct_answer": "As a contiguous array of characters terminated by a null character ('\0')",
-            "explanation": "C strings are simply character arrays. The null terminator '\0' is critical for string functions to know where the text ends.",
+            "options": ["As a dedicated String primitive type", "As a linked list of characters", "As a contiguous array of characters terminated by a null character ('\\0')", "As a struct containing a char array and a length integer"],
+            "correct_answer": "As a contiguous array of characters terminated by a null character ('\\0')",
+            "explanation": "C strings are simply character arrays. The null terminator '\\0' is critical for string functions to know where the text ends.",
             "difficulty": "Beginner"
         },
         {
-            "question_text": "What is the ASCII value of the null terminator '\0'?",
+            "question_text": "What is the ASCII value of the null terminator '\\0'?",
             "options": ["32 (space)", "48 (zero)", "0", "255"],
             "correct_answer": "0",
             "explanation": "The null terminator is the ASCII character with a numeric value of exactly 0.",
