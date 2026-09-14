@@ -413,6 +413,7 @@ class QuizQuestion(db.Model):
             'concept_id': self.concept_id,
             'question_text': self.question_text,
             'options': self.options,
+            'correct_answer': self.correct_answer,
             'explanation': self.explanation,
             'difficulty': self.difficulty
         }
