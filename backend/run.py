@@ -8,12 +8,13 @@ with app.app_context():
     # This is safe and additive — it NEVER drops or deletes existing tables/data.
     db.create_all()
     
-    # Optional one-time environment-gated Python synchronization
-    if os.environ.get("RUN_PYTHON_SYNC", "").strip().lower() == "true":
-        from sync_python_production import sync_python_course
-        print("=== RUN_PYTHON_SYNC=true detected: Executing Python course synchronization ===")
-        sync_python_course()
-        print("=== RUN_PYTHON_SYNC synchronization complete ===")
+    # Optional one-time environment-gated production course restoration
+    restore_mode = os.environ.get("RUN_COURSE_RESTORE", "").strip().lower()
+    if restore_mode in ["true", "dry-run"]:
+        from sync_production_courses import sync_production_courses
+        print(f"=== RUN_COURSE_RESTORE={restore_mode} detected: Executing production course synchronization ===")
+        sync_production_courses()
+        print("=== Production course synchronization complete ===")
 
 if __name__ == '__main__':
     # Start Flask development server on port 5000
